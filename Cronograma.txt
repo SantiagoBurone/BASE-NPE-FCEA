@@ -6,7 +6,7 @@ Base versión 1.0 		29/01/2018		"consulta_por_fecha_actividad.sql"		Base con fra
 							"procedimiento_0_v2.R"
 							"procedimiento_1.R"
 							"procedimiento_2.R"
-							"procedimiento_3.R"
+							"procedimiento_3_v1.R"
 
 
 
@@ -16,4 +16,5 @@ Base versión 1.1		29/01/2018		"consulta_por_fecha_actividad.sql"		Base con frac
 							"procedimiento_0_v2.R"
 							"procedimiento_1.R"
 							"procedimiento_2.R"
+							"procedimiento_3_v2.R"
 			
