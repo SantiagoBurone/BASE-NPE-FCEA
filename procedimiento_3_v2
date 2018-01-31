@@ -178,7 +178,7 @@ base[, c(s+1)]<-NULL
 
 #Guardo base de datos
 base$MAT<-as.character(base$MAT)
-write.csv(base, "base_v2.csv")
+write.csv(base2, "base_NPE_v_1_1_1.csv")
 getwd()
 
 
