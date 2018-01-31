@@ -177,7 +177,8 @@ base$Aprobaciones_Act_Int<-base[, c(s+1)]
 base[, c(s+1)]<-NULL
 
 #Guardo base de datos
-write.csv(aux2, "base_v2.csv")
+base$MAT<-as.character(base$MAT)
+write.csv(base, "base_v2.csv")
 getwd()
 
 
