@@ -5,7 +5,7 @@ setwd("C:/Users/sburone/Documents/Base Enero")
 
 #Cargo base de actividades y formulario
 actividades<-read.csv("base_paso_1_con_fracasos.csv", sep=",")
-formulario<-read.csv("C:/Users/sburone/Documents/Base Enero/Formularios/base_con_formulario_y_fracasos.csv", sep=",")
+formulario<-read.csv("C:/Users/sburone/Documents/Base Enero/Formularios/base_con_formulario.csv", sep=",")
 #Me quedo unicamente con los estudiantes que son PLAN 2012 PUROS
 actividades2<-actividades[which(actividades$ESTCI%in%formulario$ESTCI),]
 formulario$dups<-duplicated(formulario$ESTCI)
