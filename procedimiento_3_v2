@@ -1,13 +1,12 @@
 library(foreign)
 library(plyr)
 rm(list=ls())
-setwd("C:/Users/sburone/Documents/Pedidos/Pedido UPC")
+setwd("C:/Users/sburone/Documents/Pedidos/Base enero")
 #Tomo los estudiantes puros del NPE
 
-base<-read.csv("C:/Users/sburone/Documents/Base Enero/base_paso_1_con_fracasos.csv", sep=",")
+base<-read.csv("C:/Users/sburone/Documents/Base Enero/base_paso_1.csv", sep=",")
 
 #Genero variables para áreas de conocimiento (Tomo únicamente áreas de conocimiento del NPE)
-#Tomo todos los que ingresaron a partir de 2012 (i.e: no restringo a los que contamos con el formulario estadístico)
 
 base$MAT<-as.character(base$MAT)
 base$MAT<- lapply(base$MAT, trimws)
@@ -180,3 +179,5 @@ base[, c(s+1)]<-NULL
 #Guardo base de datos
 write.csv(aux2, "base_v2.csv")
 getwd()
+
+
