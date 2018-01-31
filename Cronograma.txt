@@ -3,7 +3,7 @@ BASE				FECHA			Scripts						Observaciones
 												
 Base versión 1.0 		29/01/2018		"consulta_por_fecha_actividad.sql"		Base con fracasos y formularios estadísticos 2012-2015
 							"g_inscriptos.sql"
-							"procedimiento_0_v2.R"
+							"procedimiento_0_v1.R"
 							"procedimiento_1.R"
 							"procedimiento_2.R"
 							"procedimiento_3_v1.R"
@@ -14,7 +14,5 @@ Base versión 1.0 		29/01/2018		"consulta_por_fecha_actividad.sql"		Base con fra
 Base versión 1.1		29/01/2018		"consulta_por_fecha_actividad.sql"		Base con fracasos sin formularios estadísticos 2012-2017
 							"g_inscriptos.sql"
 							"procedimiento_0_v2.R"
-							"procedimiento_1.R"
-							"procedimiento_2.R"
 							"procedimiento_3_v2.R"
 			
