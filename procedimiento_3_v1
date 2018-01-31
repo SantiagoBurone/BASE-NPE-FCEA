@@ -1,10 +1,10 @@
 library(foreign)
 library(plyr)
 rm(list=ls())
-setwd("C:/Users/sburone/Documents/Pedidos/Pedido UPC")
+setwd("C:/Users/sburone/Documents/Base Enero")
 #Tomo los estudiantes puros del NPE
 
-base<-read.csv("C:/Users/sburone/Documents/Base Enero/basefinal_con_formulario.csv", sep=",")
+base<-read.csv("C:/Users/sburone/Documents/Base Enero/base_NPE_v_1_0_1.csv", sep=",")
 
 #Genero variables para áreas de conocimiento
 
@@ -180,5 +180,5 @@ base[, c(s+1)]<-NULL
 #Guardo base de datos
 base$MAT<-as.character(base$MAT)
 base2<-as.data.frame(base)
-write.csv(base2, "base_con_formulario_final.csv")
+write.csv(base2, "base_NPE_v_1_2_1.csv")
 getwd()
