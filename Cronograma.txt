@@ -6,8 +6,7 @@ Base versión 1.0.1 		29/01/2018		"consulta_por_fecha_actividad.sql"		Base con f
 							"procedimiento_0_v1.R"
 							"procedimiento_1.R"
 							"procedimiento_2.R"
-							"procedimiento_3_v1.R"
-
+							
 
 
 
