@@ -14,5 +14,4 @@ basefinal<-merge(actividades2, formulario, by="ESTCI")
 
 rm("actividades", "actividades2", "formulario")
 
-write.csv(basefinal, "basefinal_con_formulario.csv")
-
+write.csv(basefinal, "base_NPE_v_1_0_1.csv")
