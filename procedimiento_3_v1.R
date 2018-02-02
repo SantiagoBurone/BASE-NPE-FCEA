@@ -1,0 +1,63 @@
+library(foreign)
+library(plyr)
+rm(list=ls())
+setwd("C:/Users/sburone/Documents/Base Enero")
+#Tomo los estudiantes puros del NPE
+
+base<-read.csv("C:/Users/sburone/Documents/Base Enero/base_NPE_v_1_0_2.csv", sep=",")
+
+#Genero variables para áreas de conocimiento
+
+base$MAT<-as.character(base$MAT)
+base$MAT<- lapply(base$MAT, trimws)
+#Materias Métodos Cuantitativos
+
+base$Met_Cuant<-ifelse((base$MAT=="Q114" | base$MAT=="213A" | base$MAT=="227A" | base$MAT=="MC40B" | base$MAT=="MC10" | base$MAT=="114A" | base$MAT=="MC20" | base$MAT=="128A" | base$MAT=="CM128" | base$MAT=="MC30" | base$MAT=="MC40" | base$MAT=="MC72" | base$MAT=="MC45" | base$MAT=="MC31" | base$MAT=="MC42" | base$MAT=="MC51" | base$MAT=="MC31" | base$MAT=="MC44" | base$MAT=="MC43" | base$MAT=="MC52" | base$MAT=="MC61" | base$MAT=="MC70" | base$MAT=="MC71" | base$MAT=="462"), 1, 0)
+
+#Materias Economía
+base$Econ<-ifelse((base$MAT=="E10" | base$MAT=="E20" | base$MAT=="E30" | base$MAT=="E33" | base$MAT=="E31" | base$MAT=="E40" | base$MAT=="E41" | base$MAT=="E51" | base$MAT=="E50" | base$MAT=="E60" | base$MAT=="E61" | base$MAT=="E72" | base$MAT=="E73" | base$MAT=="E74" | base$MAT=="E70" | base$MAT=="E71" | base$MAT=="E75" | base$MAT=="E76" | base$MAT=="E77" | base$MAT=="E78" | base$MAT=="E79" | base$MAT=="E90" | base$MAT=="E170" | base$MAT=="E91" | base$MAT=="E80" | base$MAT=="E81" |base$MAT=="E82" |base$MAT=="E83" |base$MAT=="E86" | base$MAT=="E94" | base$MAT=="E87" | base$MAT=="E88" | base$MAT=="E81" | base$MAT=="E53" | base$MAT=="E52" | base$MAT=="E81"), 1, 0)
+
+#Materias Contabilidad
+base$Cont<-ifelse((base$MAT=="TC40" | base$MAT=="C10" | base$MAT=="C20" | base$MAT=="C30" | base$MAT=="C31" | base$MAT=="C40" | base$MAT=="C41"| base$MAT=="C50" | base$MAT=="C51" | base$MAT=="C60" | base$MAT=="C61" | base$MAT=="C62" |  base$MAT=="C63" | base$MAT=="C70" | base$MAT=="C72" | base$MAT=="C73" | base$MAT=="C74" | base$MAT=="C81" | base$MAT=="C82" | base$MAT=="C80" | base$MAT=="C83"), 1, 0)
+
+#Materias Administración
+base$Admin<-ifelse((base$MAT=="A10" | base$MAT=="A20" | base$MAT=="A30" | base$MAT=="A40" | base$MAT=="A41" | base$MAT=="A42" | base$MAT=="A50" | base$MAT=="A52" | base$MAT=="A54" |  base$MAT=="A61" | base$MAT=="A62" | base$MAT=="A63" | base$MAT=="A67" |  base$MAT=="A65" | base$MAT=="A66" | base$MAT=="A70" | base$MAT=="A71" | base$MAT=="A72" | base$MAT=="A73" | base$MAT=="A76" | base$MAT=="A80" |  base$MAT=="A81" | base$MAT=="A82" | base$MAT=="A83" | base$MAT=="A84" | base$MAT=="A85" | base$MAT=="A86" | base$MAT=="A87"), 1 , 0)
+
+#Materias Jurídica
+base$Juridica<-ifelse((base$MAT=="J20TP" |  base$MAT=="J21" | base$MAT=="J30" | base$MAT=="J40TP" |  base$MAT=="J50" |  base$MAT=="J60TP"), 1, 0)
+
+#Materias Social
+base$Social<-ifelse((base$MAT=="S20" | base$MAT=="S21" | base$MAT=="S30" | base$MAT=="141" | base$MAT=="S40" | base$MAT=="S41" | base$MAT=="S44" | base$MAT=="S45" | base$MAT=="S46" | base$MAT=="S60" | base$MAT=="S80" | base$MAT=="S90" | base$MAT=="D78" ), 1, 0)
+
+#Materias Actividades Integradoras
+base$Act_Int<-ifelse((base$MAT=="I52" | base$MAT=="I97" | base$MAT=="I111" | base$MAT=="I112" | base$MAT=="I113" | base$MAT=="I50" | base$MAT=="I40" |  base$MAT=="I97" | base$MAT=="I114D" | base$MAT=="I60" | base$MAT=="I113" | base$MAT=="I132" | base$MAT=="I80" | base$MAT=="I83" | base$MAT=="I84" | base$MAT=="I51" | base$MAT=="I116" | base$MAT=="I140" | base$MAT=="I132" | base$MAT=="I30A" | base$MAT=="I73" | base$MAT=="ITF12" | base$MAT=="I117" | base$MAT=="I140"), 1, 0)
+
+#Genero brecha entre finalizar secundaira e ingresar a FCEA
+base$brecha_sec_fac<-base$FECHAING-base$ANIOFINSEC
+
+#Calculo escolaridad
+data<-base
+data$x<-ifelse(data$resultado_actividad == "curso exonerado" | data$resultado_actividad == "examen aprobado" | data$resultado_actividad == "examen perdido", 1, 0)
+#data$x<-ifelse((data$x==1 & data$CRCURR==5), 2, ifelse((data$x==1 & data$CRCURR==15), 3, 1))
+aux<-aggregate(data$x, by=list(Category=data$ESTCI), FUN=sum)
+aux2<-aggregate(data$NOTAMATERIA, by=list(Category=data$ESTCI), FUN=sum)
+data12<-merge(x=data, y=aux, by.x ="ESTCI", by.y ="Category" )
+data12$denominador<-data12$x.y
+data12<-merge(x=data12, y=aux2, by.x="ESTCI", by.y ="Category")
+data12$nominador<-data12$x
+data12$escolaridad<-data12$nominador/data12$denominador
+data12$x.x<-NULL
+data12$x.y<-NULL
+data12$x<-NULL
+data12$denominador<-NULL
+data12$nominador<-NULL
+base<-data12
+rm(aux, aux2, data, data12)
+
+
+#Guardo base de datos
+
+base$MAT<-as.character(base$MAT)
+base2<-as.data.frame(base)
+write.csv(base2, "base_NPE_v_1_0_2.csv")
+getwd()
