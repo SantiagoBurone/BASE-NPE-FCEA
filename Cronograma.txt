@@ -28,4 +28,4 @@ Base versión 1.0.2		01/02/2018		"consulta_por_fecha_actividad.sql"		Base con fr
 							"procedimiento_0_v3.R"
 							"procedimiento_1_v2.R
 							"procedimiento_2_v3.R"
-							"procedimiento_3_v2.R"
+							"procedimiento_3_v3.R"
