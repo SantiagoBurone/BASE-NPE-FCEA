@@ -371,3 +371,4 @@ rm(list=c("base2012", "base2013", "base2014", "base2015", "base2016", "gen2012",
 
 write.csv(baseconform, "base_con_formulario.csv")
 
+
