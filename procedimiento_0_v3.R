@@ -28,6 +28,8 @@ base<-rbind(base, b5)
 base<-rbind(base, b6)
 
 rm(list=c("b1","b2","b3","b4","b5", "b6", "b2_1", "b2_2"))
+base<-base3
+rm(base3)
 
 #Elimino espacios en blanco 
 
@@ -39,8 +41,26 @@ base$borrar<-ifelse(is.na(base$ESTCI),1,0)
 base<-base[!(base$borrar==1),]
 base$borrar<-NULL
 
+#Genero primera inscripcion a FCEA
+#Para correr esta parte se debe descargar los inscriptos a FCEA del SGB utilizando la consulta "g_inscriptos.sql"
+setwd("C:/Users/sburone/Documents/Base Enero/Formularios")
+i<-read.csv("g_inscriptos_consulta1_conv.csv", header = T)
+i$X<-NULL
+i$FECHAING<-floor(as.integer(as.character(i$FECHA))/10000)
+d = aggregate(i$FECHAING,by=list(i$ESTCI), min)
+names(d)[1]<-paste("ESTCI")
+t2 = merge(i, d, by = ("ESTCI"))
+t2$Min_Fech_ing<-t2$x
+t2<-t2[!(duplicated(t2$ESTCI)),]
+t2<-subset(t2, selec=c("ESTCI", "Min_Fech_ing"))
+base3<-merge(base, t2, by=("ESTCI"))
+rm(list=c("d", "i", "t2"))
 
 
+#Genero maxima fecha ingreso
+max_fech_eg<-ddply(.data=base, .variables = c("ESTCI"), .fun=function(x){max(x$FECHAING)})
+colnames(max_fech_eg) <- c("ESTCI","Max_fech_eg")
+base <- join(base,max_fech_eg)
 #####Genero creditos aprobados#####
 
 #Recreo variables
@@ -101,32 +121,32 @@ base <- join(base,creditos_estudiantes)
 
 #Creditos aprobados por anio (primeros 5 anios solamente)
 #Creditos antes de entrar a FCEA
-base$anio0 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)<floor(as.integer(as.character(base$FECHAING))),1,0)
+base$anio0 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)<floor(as.integer(as.character(base$Min_Fech_ing))),1,0)
 creditos_anio0 <- ddply(.data=base[which(base$anio0==1),],.variables=c("ESTCI"),.fun=function(x){sum(x$creditos_aprob)})
 colnames(creditos_anio0) <- c("ESTCI","creditos_anio0")
 base <- join(base,creditos_anio0)
 #Creditos anio1
-base$anio1 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)==floor(as.integer(as.character(base$FECHAING))),1,0)
+base$anio1 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)==floor(as.integer(as.character(base$Min_Fech_ing))),1,0)
 creditos_anio1 <- ddply(.data=base[which(base$anio1==1),],.variables=c("ESTCI"),.fun=function(x){sum(x$creditos_aprob)})
 colnames(creditos_anio1) <- c("ESTCI","creditos_anio1")
 base <- join(base,creditos_anio1)
 #Creditos anio2
-base$anio2 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)==(1+floor(as.integer(as.character(base$FECHAING)))),1,0)
+base$anio2 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)==(1+floor(as.integer(as.character(base$Min_Fech_ing)))),1,0)
 creditos_anio2 <- ddply(.data=base[which(base$anio2==1),],.variables=c("ESTCI"),.fun=function(x){sum(x$creditos_aprob)})
 colnames(creditos_anio2) <- c("ESTCI","creditos_anio2")
 base <- join(base,creditos_anio2)
 #Creditos anio3
-base$anio3 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)==(2+floor(as.integer(as.character(base$FECHAING)))),1,0)
+base$anio3 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)==(2+floor(as.integer(as.character(base$Min_Fech_ing)))),1,0)
 creditos_anio3 <- ddply(.data=base[which(base$anio3==1),],.variables=c("ESTCI"),.fun=function(x){sum(x$creditos_aprob)})
 colnames(creditos_anio3) <- c("ESTCI","creditos_anio3")
 base <- join(base,creditos_anio3)
 #Creditos anio4
-base$anio4 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)==(3+floor(as.integer(as.character(base$FECHAING)))),1,0)
+base$anio4 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)==(3+floor(as.integer(as.character(base$Min_Fech_ing)))),1,0)
 creditos_anio4 <- ddply(.data=base[which(base$anio4==1),],.variables=c("ESTCI"),.fun=function(x){sum(x$creditos_aprob)})
 colnames(creditos_anio4) <- c("ESTCI","creditos_anio4")
 base <- join(base,creditos_anio4)
 #Creditos anio5
-base$anio5 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)==(4+floor(as.integer(as.character(base$FECHAING)))),1,0)
+base$anio5 <- ifelse(floor(as.integer(as.character(base$FECHA))/10000)==(4+floor(as.integer(as.character(base$Min_Fech_ing)))),1,0)
 creditos_anio5 <- ddply(.data=base[which(base$anio5==1),],.variables=c("ESTCI"),.fun=function(x){sum(x$creditos_aprob)})
 colnames(creditos_anio5) <- c("ESTCI","creditos_anio5")
 base <- join(base,creditos_anio5)
@@ -146,31 +166,12 @@ write.csv(base, "base_paso_1_con_fracasos.csv")
 
 setwd("C:/Users/sburone/Documents/Base Enero/Formularios")
 
-#Genero una base por generación sin duplicados
-
-base2<-base[which(!duplicated(base$ESTCI)),]
-
-#Genero primer ingreso a FCEA
-
-#Cargo consulta de inscriptos historicos
-#Para correr esta parte se debe descargar los inscriptos a FCEA del SGB utilizando la consulta "g_inscriptos.sql"
-i<-read.csv("g_inscriptos_consulta1_conv.csv", header = T)
-i$X<-NULL
-i$FECHAING<-floor(as.integer(as.character(i$FECHA))/10000)
-d = aggregate(i$FECHAING,by=list(i$ESTCI), min)
-names(d)[1]<-paste("ESTCI")
-t2 = merge(i, d, by = ("ESTCI"))
-t2$FECHAING2<-t2$x
-t2<-t2[!(duplicated(t2$ESTCI)),]
-
-base3<-merge(base2, t2, by=("ESTCI"))
-
-gen2012<-base3[which(base3$FECHAING2==2012),]
-gen2013<-base3[which(base3$FECHAING2==2013),]
-gen2014<-base3[which(base3$FECHAING2==2014),]
-gen2015<-base3[which(base3$FECHAING2==2015),]
-gen2016<-base3[which(base3$FECHAING2==2016),]
-gen2017<-base3[which(base3$FECHAING2==2017),]
+gen2012<-base[which(base$Min_Fech_ing==2012),]
+gen2013<-base[which(base$Min_Fech_ing==2013),]
+gen2014<-base[which(base$Min_Fech_ing==2014),]
+gen2015<-base[which(base$Min_Fech_ing==2015),]
+gen2016<-base[which(base$Min_Fech_ing==2016),]
+gen2017<-base[which(base$Min_Fech_ing==2017),]
 
 #Cargo formularios estadísticos
 #Para correr esta parte se debe contar con los formularios estadísticos de ingreso
@@ -215,10 +216,10 @@ total16<-join(gen2016,ing2016,by="ESTCI")
 write.csv(total16,"gen2016_sindup_confest2.csv")
 
 
-base4<-base3[which(base3$FECHAING2==2012 | base3$FECHAING2==2013 | base3$FECHAING2==2014 | base3$FECHAING2==2015 | base3$FECHAING2==2016),]
+base4<-base[which(base$Min_Fech_ing==2012 | base$Min_Fech_ing==2013 | base$Min_Fech_ing==2014 | base$Min_Fech_ing==2015 | base$Min_Fech_ing==2016),]
 
 base_final<-base[which(base$ESTCI%in%base4$ESTCI),]
 rm(base, base2, base3, base4, d, gen2012, gen2013, gen2014, gen2015, gen2016, gen2017, i, t2)
 setwd("C:/Users/sburone/Documents/Base Enero")
-write.csv(base_final, "base_paso_1.csv")
+  write.csv(base_final, "base_paso_1.csv")
 
