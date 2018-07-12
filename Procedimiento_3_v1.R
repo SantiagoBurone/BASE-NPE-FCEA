@@ -1,9 +1,15 @@
+#######################################################
+###########################################################
+############     PROCEDIMIENTO 3.V1
+############        BASE NPE
+#####################################
+
 library(foreign)
 library(plyr)
 #Cargo base de datos
 rm(list=ls())
-setwd("C:/Users/sburone/Documents/Base Enero")
-base<-read.csv("base_paso_1_con_fracasos_NPE_PUROS.csv", sep=";", quote="")
+setwd("C:/Users/sburone/Documents/BASE NPE FINAL/Bases/auxiliares")
+base<-read.csv("base_paso_1_con_fracasos2.csv", sep=",")
 
 #Genero variables para áreas de conocimiento (Tomo únicamente áreas de conocimiento del NPE)
 
@@ -61,7 +67,7 @@ base<-data12
 rm(aux, aux2, data, data12, data22)
 
 #Guardo hasta acá, ya que lo siguiente demora mucho en correr
-setwd("C:/Users/sburone/Documents/Base Enero")
+
 base$MAT<-as.character(base$MAT)
 write.table(base, "base_con_dummy_area_conocimiento_sin_fe.csv", sep=";", quote=FALSE, row.names = FALSE)
 
@@ -291,8 +297,30 @@ colnames(creditos_anio5_Cont) <- c("ESTCI","creditos_anio5_Cont")
 base <- join(base,creditos_anio5_Cont)
 
 #Guardo la base
-write.table(base, "base_NPE_1.0.1.csv", quote=FALSE, row.names=FALSE, sep=";")
-rm(list=setdiff(ls(), "base"))
+
+
+#Guardo base de datos
+setwd("C:/Users/sburone/Documents/BASE NPE FINAL/Bases")
+base$MAT<-as.character(base$MAT)
+write.table(base, "base_NPE_v_1_2018_0_0.csv", quote=FALSE, sep=";", row.names = FALSE)
+
+write.dta(base, "base_NPE_v_1_2018_0_0.dta")
+
+########################################################################################
+##############    NO CORRER LA SIGUIENTE PARTE A MENOS QUE SE REQUIERA LA VERSION 2 DE 
+#############               LA BASE DE DATOS
+########################################################################################
+
+#####Las siguientes lineas generan un vector por area de conocimiento con las materias
+####aprobadas en esa área de conocimiento
+
+##No se incluye en la version 0 de la base porque solo en algunos casos puntuales se ha 
+##requerido de esta información y demora mucho tiempo en correr (MUCHO)
+
+########################################################################################
+########################################################################################
+########################################################################################
+
 ################################################################
 #######Genero materias aprobadas por area de conocimiento#######
 ################################################################
@@ -417,8 +445,9 @@ base$Aprobaciones_Act_Int<-base[, c(s+1)]
 base[, c(s+1)]<-NULL
 
 #Guardo base de datos
+setwd("C:/Users/sburone/Documents/BASE NPE FINAL/Bases")
 base$MAT<-as.character(base$MAT)
-write.table(base, "base_NPE_v_1_1_1.csv", quote=FALSE, sep=";", row.names = FALSE)
+write.table(base, "base_NPE_v_2018_1_1_0.csv", quote=FALSE, sep=";", row.names = FALSE)
 getwd()
-write.dta(base, "base_NPE_v_1_0_0.dta")
+write.dta(base, "base_NPE_v_2018_1_1_0.dta")
 
