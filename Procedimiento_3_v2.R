@@ -1,9 +1,15 @@
+#######################################################
+###########################################################
+############     PROCEDIMIENTO 3.V2
+############        BASE NPE
+#####################################
+
 library(foreign)
 library(plyr)
 #Cargo base de datos
 rm(list=ls())
-setwd("C:/Users/sburone/Documents/Base Enero")
-base<-read.csv("basefinal_con_fracasos.csv", sep=";", quote="")
+setwd("C:/Users/sburone/Documents/BASE NPE FINAL/Bases/auxiliares")
+base<-read.dta("basefinal_con_fracasos_formulario.dta")
 
 #Genero variables para áreas de conocimiento (Tomo únicamente áreas de conocimiento del NPE)
 
@@ -61,9 +67,9 @@ base<-data12
 rm(aux, aux2, data, data12, data22)
 
 #Guardo hasta acá, ya que lo siguiente demora mucho en correr
-setwd("C:/Users/sburone/Documents/Base Enero")
+
 base$MAT<-as.character(base$MAT)
-write.table(base, "base_con_dummy_area_conocimiento_sin_fe.csv", sep=";", quote=FALSE, row.names = FALSE)
+write.table(base, "base_con_dummy_area_conocimiento_con_fe.csv", sep=";", quote=FALSE, row.names = FALSE)
 
 ############################################################
 ##########GENERO CREDITOS POR AREA DE CONOCIMIENTO##########
@@ -291,5 +297,156 @@ colnames(creditos_anio5_Cont) <- c("ESTCI","creditos_anio5_Cont")
 base <- join(base,creditos_anio5_Cont)
 
 #Guardo la base
-write.table(base, "base_NPE_1.0.1.csv", quote=FALSE, row.names=FALSE, sep=";")
-rm(list=setdiff(ls(), "base"))
+
+
+#Guardo base de datos
+setwd("C:/Users/sburone/Documents/BASE NPE FINAL/Bases")
+base$MAT<-as.character(base$MAT)
+write.table(base, "base_NPE_v_1_2018_0_1.csv", quote=FALSE, sep=";", row.names = FALSE)
+
+write.dta(base, "base_NPE_v_1_2018_0_1.dta")
+
+########################################################################################
+##############    NO CORRER LA SIGUIENTE PARTE A MENOS QUE SE REQUIERA LA VERSION 2 DE 
+#############               LA BASE DE DATOS
+########################################################################################
+
+#####Las siguientes lineas generan un vector por area de conocimiento con las materias
+####aprobadas en esa área de conocimiento
+
+##No se incluye en la version 0 de la base porque solo en algunos casos puntuales se ha 
+##requerido de esta información y demora mucho tiempo en correr (MUCHO)
+
+########################################################################################
+########################################################################################
+########################################################################################
+
+################################################################
+#######Genero materias aprobadas por area de conocimiento#######
+################################################################
+
+#Metodos Cuantitativos
+base <- base[order(base$ESTCI),]
+s<-ncol(base)
+base[, c(s+1)]<-" "
+base[c(1), c(s+1)]<-as.character(base[1, c(s+1)])
+
+for (i in nrow(base):2){
+  
+  base[c(i), c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Met_Cuant")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+  
+}
+
+base[1, c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Met_Cuant")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+
+base$Aprobaciones_Met_Cuant<-base[, c(s+1)]
+base[, c(s+1)]<-NULL
+
+#Economía
+base <- base[order(base$ESTCI),]
+s<-ncol(base)
+base[, c(s+1)]<-" "
+base[c(1), c(s+1)]<-as.character(base[1, c(s+1)])
+
+for (i in nrow(base):2){
+  
+  base[c(i), c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Econ")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+  
+}
+
+base[1, c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Econ")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+
+base$Aprobaciones_Econ<-base[, c(s+1)]
+base[, c(s+1)]<-NULL
+
+#Contabilidad
+base <- base[order(base$ESTCI),]
+s<-ncol(base)
+base[, c(s+1)]<-" "
+base[c(1), c(s+1)]<-as.character(base[1, c(s+1)])
+
+for (i in nrow(base):2){
+  
+  base[c(i), c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Cont")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+  
+}
+
+base[1, c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Cont")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+
+base$Aprobaciones_Cont<-base[, c(s+1)]
+base[, c(s+1)]<-NULL
+
+#Jurídica
+base <- base[order(base$ESTCI),]
+s<-ncol(base)
+base[, c(s+1)]<-" "
+base[c(1), c(s+1)]<-as.character(base[1, c(s+1)])
+
+for (i in nrow(base):2){
+  
+  base[c(i), c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Juridica")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+  
+}
+
+base[1, c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Juridica")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+
+base$Aprobaciones_Juridica<-base[, c(s+1)]
+base[, c(s+1)]<-NULL
+
+#Administración
+base <- base[order(base$ESTCI),]
+s<-ncol(base)
+base[, c(s+1)]<-" "
+base[c(1), c(s+1)]<-as.character(base[1, c(s+1)])
+
+for (i in nrow(base):2){
+  
+  base[c(i), c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Admin")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+  
+}
+
+base[1, c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Admin")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+
+base$Aprobaciones_Admin<-base[, c(s+1)]
+base[, c(s+1)]<-NULL
+
+#Social
+base <- base[order(base$ESTCI),]
+s<-ncol(base)
+base[, c(s+1)]<-" "
+base[c(1), c(s+1)]<-as.character(base[1, c(s+1)])
+
+for (i in nrow(base):2){
+  
+  base[c(i), c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Social")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+  
+}
+
+base[1, c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Social")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+
+base$Aprobaciones_Social<-base[, c(s+1)]
+base[, c(s+1)]<-NULL
+
+#Actividades integradoras
+base <- base[order(base$ESTCI),]
+s<-ncol(base)
+base[, c(s+1)]<-" "
+base[c(1), c(s+1)]<-as.character(base[1, c(s+1)])
+
+for (i in nrow(base):2){
+  
+  base[c(i), c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Act_Int")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+  
+}
+
+base[1, c(s+1)]<-ifelse(  ((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]) & (base[c(i),c("Act_Int")]==1) & ((base[c(i),c("resultado_actividad")]=="Aprobado/Revalida (sin nota)") | (base[c(i),c("resultado_actividad")]=="curso exonerado") | (base[c(i),c("resultado_actividad")]=="examen aprobado") )), (paste(base[c(i),c("NOMMAT")], (base[c(i+1),c(s+1)]), sep="&")), ifelse((base[c(i),c("ESTCI")]==base[c(i+1), c("ESTCI")]),    (base[c(i+1),c(s+1)]), NA))
+
+base$Aprobaciones_Act_Int<-base[, c(s+1)]
+base[, c(s+1)]<-NULL
+
+#Guardo base de datos
+setwd("C:/Users/sburone/Documents/BASE NPE FINAL/Bases")
+base$MAT<-as.character(base$MAT)
+write.table(base, "base_NPE_v_2018_1_1_0.csv", quote=FALSE, sep=";", row.names = FALSE)
+getwd()
+write.dta(base, "base_NPE_v_2018_1_1_0.dta")
