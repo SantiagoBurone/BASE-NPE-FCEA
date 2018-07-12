@@ -1,33 +1,32 @@
+#######################################################
+###########################################################
+############     PROCEDIMIENTO 1.V1
+############        BASE NPE
+#####################################
+
+#Cargo datos formularios estadísticos Montevideo
 library(foreign)
 library(plyr)
 rm(list=ls())
-setwd("C:/Users/sburone/Documents/Base Enero/Formularios")
 
-gen2012<-read.csv("gen2012_sindup_confest2.csv")
-gen2013<-read.csv("gen2013_sindup_confest2.csv")
-gen2014<-read.csv("gen2014_sindup_confest2.csv")
-gen2015<-read.csv("gen2015_sindup_confest2.csv")
-gen2016<-read.csv("gen2016_sindup_confest2.csv")
-variables<-read.csv("Compatibilizador form est ingreso.csv",sep=";")
+setwd("C:/Users/sburone/Documents/BASE NPE FINAL/Datos/SGB")
+
+#Lo primero que hay que hacer es cargar los formularioes estadisticos y no la base con 
+#las actividades del formulario estadistico
+
+
+load("C:/Users/sburone/Documents/BASE NPE FINAL/Datos/DGplan/precargadas.Rdata")
+#gen20122<-read.dta("C:/Users/sburone/Documents/BASE NPE FINAL/Datos/DGplan/2012.dta")
+#gen20132<-read.dta("C:/Users/sburone/Documents/BASE NPE FINAL/Datos/DGplan/2013.dta")
+#gen20142<-read.dta("C:/Users/sburone/Documents/BASE NPE FINAL/Datos/DGplan/2014.dta")
+#gen20152<-read.dta("C:/Users/sburone/Documents/BASE NPE FINAL/Datos/DGplan/2015.dta")
+#gen20162<-read.dta("C:/Users/sburone/Documents/BASE NPE FINAL/Datos/DGplan/2016.dta")
+
 
 
 ###################################
 ######Compatibilizado de variables#
 ###################################
-
-#############barrio#############
-gen2012$barrio<-as.factor(gen2012$barrio)
-gen2013$barrio<-as.factor(gen2013$barrio)
-gen2014$barrio<-as.factor(gen2014$barrio)
-gen2015$barrio<-tolower(as.factor(gen2015$barrio))
-gen2016$barrio<-as.factor(gen2016$barrio)
-##Residencia##
-
-gen2012$residen<-as.factor(gen2012$res_lug)
-gen2013$residen<-as.factor(gen2013$residen)
-gen2013$residen<-as.factor(gen2013$residen)
-gen2015$residen<-tolower(as.factor(gen2015$residen))
-gen2016$residen<-as.factor(gen2016$residen)
 
 #############Sexo (mujer)#############
 gen2012$mujer<-ifelse(gen2012$Sexo=="Mujer",1,0)
@@ -41,314 +40,794 @@ gen2016$mujer<-ifelse(gen2016$sexo=="Mujeres",1,0)
 gen2012$lug_nac<-gen2012$nac_lug
 gen2013$lug_nac<-gen2013$lug_nac
 gen2014$lug_nac<-gen2014$lug_nac
-gen2015$lug_nac<-tolower(gen2015$nac_lug)
+gen2015$lug_nac<-gen2015$nac_lug
 gen2016$lug_nac<-gen2016$lug_nac
 
-#############lugar de residencia en marzo del año previo al ingreso (res_marzo)#############
-gen2012$res_marzo<-ifelse(gen2012$res_marzo==1,"montevideo",
-                          ifelse(gen2012$res_marzo==2, "artigas",
-                                 ifelse(gen2012$res_marzo==3, "canelones",
-                                        ifelse(gen2012$res_marzo==4, "cerro largo",
-                                               ifelse(gen2012$res_marzo==5, "colonia",
-                                                      ifelse(gen2012$res_marzo==6, "durazno",
-                                                             ifelse(gen2012$res_marzo==7, "flores",
-                                                                    ifelse(gen2012$res_marzo==8, "florida",
-                                                                           ifelse(gen2012$res_marzo==9, "lavalleja",
-                                                                                  ifelse(gen2012$res_marzo==10, "maldonado",
-                                                                                         ifelse(gen2012$res_marzo==11, "paysandú",
-                                                                                                ifelse(gen2012$res_marzo==12, "río negro",
-                                                                                                       ifelse(gen2012$res_marzo==13, "rivera",
-                                                                                                              ifelse(gen2012$res_marzo==14, "rocha",
-                                                                                                                     ifelse(gen2012$res_marzo==15, "salto",
-                                                                                                                            ifelse(gen2012$res_marzo==16, "san josé",
-                                                                                                                                   ifelse(gen2012$res_marzo==17, "soriano",
-                                                                                                                                          ifelse(gen2012$res_marzo==18, "tacuarembó",
-                                                                                                                                                 ifelse(gen2012$res_marzo==19, "treinta y tres",
-                                                                                                                                                        ifelse(gen2012$res_marzo==20, "argentina",
-                                                                                                                                                               ifelse(gen2012$res_marzo==21, "brasil",
-                                                                                                                                                                      ifelse(gen2012$res_marzo==22, "chile",
-                                                                                                                                                                             ifelse(gen2012$res_marzo==23, "paraguay",
-                                                                                                                                                                                    ifelse(gen2012$res_marzo==24, "venezuela",
-                                                                                                                                                                                           ifelse(gen2012$res_marzo==25, "perú",
-                                                                                                                                                                                                  ifelse(gen2012$res_marzo==26, "colombia",
-                                                                                                                                                                                                         ifelse(gen2012$res_marzo==27, "bolivia",
-                                                                                                                                                                                                                ifelse(gen2012$res_marzo==28, "ecuador",
-                                                                                                                                                                                                                       ifelse(gen2012$res_marzo==29, "estados unidos",
-                                                                                                                                                                                                                              ifelse(gen2012$res_marzo==30, "europa",
-                                                                                                                                                                                                                                     ifelse(gen2012$res_marzo==31, "otros", NA)))))))))))))))))))))))))))))))
+gen2012$lug_nac <- ifelse(as.numeric(gen2012$lug_nac) > 1 & as.numeric(gen2012$lug_nac) < 20, 1,
+                          ifelse(as.numeric(gen2012$lug_nac) > 19,3,2))
 
-gen2015$res_marzo<-tolower(gen2015$res_marzo)
-gen2016$res_marzo<-gen2016$res_marzo
+gen2013$lug_nac <- ifelse(as.numeric(gen2013$lug_nac) > 1 & as.numeric(gen2013$lug_nac) < 20, 1,
+                          ifelse(as.numeric(gen2013$lug_nac) > 19,3,2))
+
+gen2014$lug_nac <- ifelse(as.numeric(gen2014$lug_nac) > 1 & as.numeric(gen2014$lug_nac) < 20, 1,
+                          ifelse(as.numeric(gen2014$lug_nac) > 19,3,2))
+
+gen2015$lug_nac <- ifelse(as.numeric(gen2015$lug_nac) > 1 & as.numeric(gen2015$lug_nac) < 20, 1,
+                          ifelse(as.numeric(gen2015$lug_nac) > 19,3,2))
+
+gen2016$lug_nac <- ifelse(as.numeric(gen2016$lug_nac) > 1 & as.numeric(gen2016$lug_nac) < 20, 1,
+                          ifelse(as.numeric(gen2016$lug_nac) > 19,3,2))
+
+#############lugar de residencia en marzo del año previo al ingreso (res_marzo)#############
+
+#gen2012$res_marzo <- ifelse(as.numeric(gen2012$res_marzo) > 1 & as.numeric(gen2012$res_marzo) < 20, 1,
+ #                           ifelse(as.numeric(gen2012$res_marzo) > 19,3,2))
+
+#gen2013$res_marzo <- ifelse(as.numeric(gen2013$res_marzo) > 1 & as.numeric(gen2013$res_marzo) < 20, 1,
+ #                           ifelse(as.numeric(gen2013$res_marzo) > 19,3,2))
+
+#gen2014$res_marzo <- ifelse(as.numeric(gen2014$res_marzo) > 1 & as.numeric(gen2014$res_marzo) < 20, 1,
+ #                           ifelse(as.numeric(gen2014$res_marzo) > 19,3,2))
+
+#gen2015$res_marzo <- ifelse(as.numeric(gen2015$res_marzo) > 1 & as.numeric(gen2015$res_marzo) < 20, 1,
+ #                           ifelse(as.numeric(gen2015$res_marzo) > 19,3,2))
+
+#gen2016$res_marzo <- ifelse(as.numeric(gen2016$res_marzo) > 1 & as.numeric(gen2016$res_marzo) < 20, 1,
+ #                           ifelse(as.numeric(gen2016$res_marzo) > 19,3,2))
+
+
+gen2012$res_marzo<-ifelse(gen2012$res_marzo=="Montevideo", as.character("Montevideo"),
+                          ifelse(gen2012$res_marzo=="Canelones", as.character("Canelones"),
+                                 ifelse(gen2012$res_marzo=="Flores", as.character("Flores"),
+                                        ifelse(gen2012$res_marzo=="Florida", as.character("Florida"),
+                                               ifelse(gen2012$res_marzo=="Lavalleja", as.character("Lavalleja"),
+                                                      ifelse(gen2012$res_marzo=="Rocha", as.character("Rocha"),
+                                                             ifelse(gen2012$res_marzo=="Treinta y Tres", as.character("Treinta y Tres"),
+                                                                    ifelse(gen2012$res_marzo=="Durazno", as.character("Durazno"),
+                                                                           ifelse(gen2012$res_marzo=="Maldonado", as.character("Maldonado"),
+                                                                                  ifelse(gen2012$res_marzo=="Soriano", as.character("Soriano"),
+                                                                                         ifelse(gen2012$res_marzo=="Artigas", as.character("Artigas"), 
+                                                                                                ifelse(gen2012$res_marzo=="Rivera", as.character("Rivera"),
+                                                                                                       ifelse(gen2012$res_marzo=="Salto", as.character("Salto"),
+                                                                                                              ifelse(gen2012$res_marzo=="Colonia", as.character("Colonia"),
+                                                                                                                     ifelse(gen2012$res_marzo=="Cerro Largo", as.character("Cerro Largo"),
+                                                                                                                            ifelse(gen2012$res_marzo%in%c("Paysandu", "Paysandú"), as.character("Paysandú"),
+                                                                                                                                   ifelse(gen2012$res_marzo%in%c("Tacuarembo", "Tacuarembó"), as.character("Tacuarembó"),
+                                                                                                                                          ifelse(gen2012$res_marzo%in%c("Río Negro", "Rio Negro"), as.character("Río Negro"),
+                                                                                                                                                 ifelse(gen2012$res_marzo%in%c("San Jose", "San José"), as.character("San José"),
+                                                                                                                                                        "Otro")))))))))))))))))))
+
+gen2013$res_marzo<-ifelse(gen2013$res_marzo=="Montevideo", as.character("Montevideo"),
+                          ifelse(gen2013$res_marzo=="Canelones", as.character("Canelones"),
+                                 ifelse(gen2013$res_marzo=="Flores", as.character("Flores"),
+                                        ifelse(gen2013$res_marzo=="Florida", as.character("Florida"),
+                                               ifelse(gen2013$res_marzo=="Lavalleja", as.character("Lavalleja"),
+                                                      ifelse(gen2013$res_marzo=="Rocha", as.character("Rocha"),
+                                                             ifelse(gen2013$res_marzo=="Treinta y Tres", as.character("Treinta y Tres"),
+                                                                    ifelse(gen2013$res_marzo=="Durazno", as.character("Durazno"),
+                                                                           ifelse(gen2013$res_marzo=="Maldonado", as.character("Maldonado"),
+                                                                                  ifelse(gen2013$res_marzo=="Soriano", as.character("Soriano"),
+                                                                                         ifelse(gen2013$res_marzo=="Artigas", as.character("Artigas"), 
+                                                                                                ifelse(gen2013$res_marzo=="Rivera", as.character("Rivera"),
+                                                                                                       ifelse(gen2013$res_marzo=="Salto", as.character("Salto"),
+                                                                                                              ifelse(gen2013$res_marzo=="Colonia", as.character("Colonia"),
+                                                                                                                     ifelse(gen2013$res_marzo=="Cerro Largo", as.character("Cerro Largo"),
+                                                                                                                            ifelse(gen2013$res_marzo%in%c("Paysandu", "Paysandú"), as.character("Paysandú"),
+                                                                                                                                   ifelse(gen2013$res_marzo%in%c("Tacuarembo", "Tacuarembó"), as.character("Tacuarembó"),
+                                                                                                                                          ifelse(gen2013$res_marzo%in%c("Río Negro", "Rio Negro"), as.character("Río Negro"),
+                                                                                                                                                 ifelse(gen2013$res_marzo%in%c("San Jose", "San José"), as.character("San José"),
+                                                                                                                                                        "Otro")))))))))))))))))))
+
+
+gen2014$res_marzo<-ifelse(gen2014$res_marzo=="Montevideo", as.character("Montevideo"),
+                          ifelse(gen2014$res_marzo=="Canelones", as.character("Canelones"),
+                                 ifelse(gen2014$res_marzo=="Flores", as.character("Flores"),
+                                        ifelse(gen2014$res_marzo=="Florida", as.character("Florida"),
+                                               ifelse(gen2014$res_marzo=="Lavalleja", as.character("Lavalleja"),
+                                                      ifelse(gen2014$res_marzo=="Rocha", as.character("Rocha"),
+                                                             ifelse(gen2014$res_marzo=="Treinta y Tres", as.character("Treinta y Tres"),
+                                                                    ifelse(gen2014$res_marzo=="Durazno", as.character("Durazno"),
+                                                                           ifelse(gen2014$res_marzo=="Maldonado", as.character("Maldonado"),
+                                                                                  ifelse(gen2014$res_marzo=="Soriano", as.character("Soriano"),
+                                                                                         ifelse(gen2014$res_marzo=="Artigas", as.character("Artigas"), 
+                                                                                                ifelse(gen2014$res_marzo=="Rivera", as.character("Rivera"),
+                                                                                                       ifelse(gen2014$res_marzo=="Salto", as.character("Salto"),
+                                                                                                              ifelse(gen2014$res_marzo=="Colonia", as.character("Colonia"),
+                                                                                                                     ifelse(gen2014$res_marzo=="Cerro Largo", as.character("Cerro Largo"),
+                                                                                                                            ifelse(gen2014$res_marzo%in%c("Paysandu", "Paysandú"), as.character("Paysandú"),
+                                                                                                                                   ifelse(gen2014$res_marzo%in%c("Tacuarembo", "Tacuarembó"), as.character("Tacuarembó"),
+                                                                                                                                          ifelse(gen2014$res_marzo%in%c("Río Negro", "Rio Negro"), as.character("Río Negro"),
+                                                                                                                                                 ifelse(gen2014$res_marzo%in%c("San Jose", "San José"), as.character("San José"),
+                                                                                                                                                        "Otro")))))))))))))))))))
+
+
+
+gen2015$res_marzo<-ifelse(gen2015$res_marzo=="Montevideo", as.character("Montevideo"),
+                          ifelse(gen2015$res_marzo=="Canelones", as.character("Canelones"),
+                                 ifelse(gen2015$res_marzo=="Flores", as.character("Flores"),
+                                        ifelse(gen2015$res_marzo=="Florida", as.character("Florida"),
+                                               ifelse(gen2015$res_marzo=="Lavalleja", as.character("Lavalleja"),
+                                                      ifelse(gen2015$res_marzo=="Rocha", as.character("Rocha"),
+                                                             ifelse(gen2015$res_marzo=="Treinta y Tres", as.character("Treinta y Tres"),
+                                                                    ifelse(gen2015$res_marzo=="Durazno", as.character("Durazno"),
+                                                                           ifelse(gen2015$res_marzo=="Maldonado", as.character("Maldonado"),
+                                                                                  ifelse(gen2015$res_marzo=="Soriano", as.character("Soriano"),
+                                                                                         ifelse(gen2015$res_marzo=="Artigas", as.character("Artigas"), 
+                                                                                                ifelse(gen2015$res_marzo=="Rivera", as.character("Rivera"),
+                                                                                                       ifelse(gen2015$res_marzo=="Salto", as.character("Salto"),
+                                                                                                              ifelse(gen2015$res_marzo=="Colonia", as.character("Colonia"),
+                                                                                                                     ifelse(gen2015$res_marzo=="Cerro Largo", as.character("Cerro Largo"),
+                                                                                                                            ifelse(gen2015$res_marzo%in%c("Paysandu", "Paysandú"), as.character("Paysandú"),
+                                                                                                                                   ifelse(gen2015$res_marzo%in%c("Tacuarembo", "Tacuarembó"), as.character("Tacuarembó"),
+                                                                                                                                          ifelse(gen2015$res_marzo%in%c("Río Negro", "Rio Negro"), as.character("Río Negro"),
+                                                                                                                                                 ifelse(gen2015$res_marzo%in%c("San Jose", "San José"), as.character("San José"),
+                                                                                                                                                        "Otro")))))))))))))))))))
+
+
+gen2016$res_marzo<-ifelse(gen2016$res_marzo=="Montevideo", as.character("Montevideo"),
+                          ifelse(gen2016$res_marzo=="Canelones", as.character("Canelones"),
+                                 ifelse(gen2016$res_marzo=="Flores", as.character("Flores"),
+                                        ifelse(gen2016$res_marzo=="Florida", as.character("Florida"),
+                                               ifelse(gen2016$res_marzo=="Lavalleja", as.character("Lavalleja"),
+                                                      ifelse(gen2016$res_marzo=="Rocha", as.character("Rocha"),
+                                                             ifelse(gen2016$res_marzo=="Treinta y Tres", as.character("Treinta y Tres"),
+                                                                    ifelse(gen2016$res_marzo=="Durazno", as.character("Durazno"),
+                                                                           ifelse(gen2016$res_marzo=="Maldonado", as.character("Maldonado"),
+                                                                                  ifelse(gen2016$res_marzo=="Soriano", as.character("Soriano"),
+                                                                                         ifelse(gen2016$res_marzo=="Artigas", as.character("Artigas"), 
+                                                                                                ifelse(gen2016$res_marzo=="Rivera", as.character("Rivera"),
+                                                                                                       ifelse(gen2016$res_marzo=="Salto", as.character("Salto"),
+                                                                                                              ifelse(gen2016$res_marzo=="Colonia", as.character("Colonia"),
+                                                                                                                     ifelse(gen2016$res_marzo=="Cerro Largo", as.character("Cerro Largo"),
+                                                                                                                            ifelse(gen2016$res_marzo%in%c("Paysandu", "Paysandú"), as.character("Paysandú"),
+                                                                                                                                   ifelse(gen2016$res_marzo%in%c("Tacuarembo", "Tacuarembó"), as.character("Tacuarembó"),
+                                                                                                                                          ifelse(gen2016$res_marzo%in%c("Río Negro", "Rio Negro"), as.character("Río Negro"),
+                                                                                                                                                 ifelse(gen2016$res_marzo%in%c("San Jose", "San José"), as.character("San José"),
+                                                                                                                                                        "Otro")))))))))))))))))))
+
+
+
+
+
+
 ###################################
 ######Ensamblado de bases##########
 ###################################
 
 #############tipo de vivienda actual (tip_viv)#############
-levels(gen2012$vive_en)<-levels(gen2013$tip_viv)
+levels(gen2012$vive_en)<-c("Casa", "Pensión/Hotel", "Hogar estudiantil", "Otros")
 gen2012$tip_viv<-gen2012$vive_en
-levels(gen2015$tip_viv)<-levels(gen2013$tip_viv)
-levels(gen2014$tip_viv)<-levels(gen2013$tip_viv)
-levels(gen2016$tip_viv)<-levels(gen2013$tip_viv)
+levels(gen2013$tip_viv)<-c("Casa", "Pensión/Hotel", "Hogar estudiantil", "Otros")
+levels(gen2014$tip_viv)<-c("Casa", "Pensión/Hotel", "Hogar estudiantil", "Otros")
+levels(gen2015$tip_viv)<-levels(gen2016$tip_viv)
 
 #############numero de hijos (hij_num)#############
+gen2012$hij_num<- gen2012$hijos 
 gen2013$hij_num<-gen2013$hijos
 gen2014$hij_num<-gen2014$hijos
 gen2015$hij_num<-gen2015$hijos
 gen2016$hij_num<-gen2016$hijos
 
 #############vive solo (viv_solo)#############
-gen2012$viv_solo<-as.integer(gen2012$viv_solo)-1
-gen2013$viv_solo<-as.integer(gen2013$viv_solo)-1
-gen2016$viv_solo<-as.integer(gen2016$viv_solo)-1
+gen2012$viv_solo <- ifelse(as.integer(gen2012$viv_solo) == 2, 1, 0)
+gen2013$viv_solo <- ifelse(as.integer(gen2013$viv_solo) == 2, 1, 0)
+gen2016$viv_solo <- ifelse(as.integer(gen2016$viv_solo) == 2, 1, 0)
+
 #############cantidad de personas que viven con ud (ocup)#############
-gen2012$ocup<-gen2012$pers_num
-gen2015$ocup<-ifelse((gen2015$ocup>=40), "40 y más", gen2015$ocup)
-gen2016$ocup<-ifelse((gen2016$ocup>=40), "40 y más", gen2016$ocup)
+gen2012$ocup<- gen2012$pers_num
+
 #############cantidad de personas que viven con ud y perciben ingresos(ocup_ing)#############
 gen2012$ocup_ing<-gen2012$pers_Y
-gen2015$ocup_ing<-ifelse((gen2015$ocup_ing>=40), "40 y más", gen2015$ocup_ing)
-gen2016$ocup_ing<-ifelse((gen2016$ocup_ing>=40), "40 y más", gen2016$ocup_ing)
+
 #############estado conyugal (est_cony)#############
-levels(gen2015$est_cony)<-c(levels(gen2014$est_cony),"Viudo")
+levels(gen2012$est_cony)<-c(levels(gen2012$est_cony), "Sin Dato")
+levels(gen2016$est_cony)<-c(levels(gen2012$est_cony), "Sin Dato")
 
 #############cantidad de padres que viven con ud (padres)#############
 #Este esta bien
+
 #############cantidad de padres que viven con ud y perciben ingresos (pad_ing)#############
-gen2012$Pad_ing<-gen2012$Y_padres
-gen2015$Pad_ing<-gen2015$Pad_ing
-gen2016$Pad_ing<-as.integer(gen2016$Pad_ing)
+gen2012$pad_ing<-gen2012$Y_padres
+gen2013$pad_ing<-gen2013$Pad_ing
+gen2014$pad_ing<-gen2014$Pad_ing
+gen2015$pad_ing<-gen2015$Pad_ing
+gen2016$pad_ing<-gen2016$Pad_ing
+
 #############cantidad de conyuges que viven con ud (conyug)#############
-#Este esta bien
+gen2016$conyug <- ifelse(gen2016$conyug=="Sí",1,0)
+
 #############cantidad de conyuges que viven con ud  y perciben ingresos (cony_ing)#############
 gen2012$cony_ing<-gen2012$Y_conyug
 gen2013$cony_ing<-gen2013$Cony_ing
 gen2014$cony_ing<-gen2014$Cony_ing
 gen2015$cony_ing<-gen2015$Cony_ing
 gen2016$cony_ing<-gen2016$Cony_ing
+
 #############cantidad de conyuges de padres que viven con ud (cony_pad)#############
 gen2012$cony_pad<-gen2012$cony_p_m
-gen2016$cony_pad<-as.integer(gen2016$cony_pad)
-#############cantidad de conyuges de padres que viven con ud  y perciben ingresos (cony_pad_ing)#############
-gen2012$Cony_pad_ing<-gen2012$Y_cony_p_m
+gen2016$cony_pad<-gen2016$cony_pad
 
+#############cantidad de conyuges de padres que viven con ud  y perciben ingresos (cony_pad_ing)#############
+gen2012$cony_pad_ing <- gen2012$Y_cony_p_m
+gen2013$cony_pad_ing <- gen2013$Cony_pad_ing
+gen2014$cony_pad_ing <- gen2014$Cony_pad_ing
+gen2015$cony_pad_ing <- gen2015$Cony_pad_ing
+gen2016$cony_pad_ing <- gen2016$Cony_pad_ing
+   
 #############cantidad de hijos que viven con ud (hijo_viv)#############
 gen2012$hijo_viv<-gen2012$hijos
 
 #############cantidad de hijos que viven con ud  y perciben ingresos (hijo_ing)#############
-gen2012$Hijo_ing<-gen2012$Y_hijos
-gen2015$Hijo_ing<-gen2015$Hijo_ing
+gen2012$hijo_ing<-gen2012$Y_hijos
+gen2013$hijo_ing<-gen2013$Hijo_ing
+gen2014$hijo_ing<-gen2014$Hijo_ing
+gen2015$hijo_ing<-gen2015$Hijo_ing
+gen2016$hijo_ing<-gen2016$Hijo_ing
 
 #############cantidad de hermanos que viven con ud (herman)#############
 #Este esta bien
+
 #############cantidad de hermanos que viven con ud  y perciben ingresos (herm_ing)#############
-gen2012$Herm_ing<-gen2012$Y_herman
-gen2015$Herm_ing<-gen2015$Herm_ing
+gen2012$herm_ing<-gen2012$Y_herman
+gen2013$herm_ing<-gen2013$Herm_ing
+gen2014$herm_ing<-gen2014$Herm_ing
+gen2015$herm_ing<-gen2015$Herm_ing
+gen2016$herm_ing<-gen2016$Herm_ing
 
 #############cantidad de abuelos que viven con ud (abuelo)#############
 #Este esta bien
 #############cantidad de abuelos que viven con ud  y perciben ingresos (abu_ing)#############
-gen2012$Abu_ing<-gen2012$Y_abuelo
-gen2015$Abu_ing<-gen2015$Abu_ing
+gen2012$abu_ing<-gen2012$Y_abuelo
+gen2013$abu_ing<-gen2013$Abu_ing
+gen2014$abu_ing<-gen2014$Abu_ing
+gen2015$abu_ing<-gen2015$Abu_ing
+gen2016$abu_ing<-gen2016$Abu_ing
 
 #############cantidad de suegros que viven con ud (suegro)#############
 gen2012$suegro<-gen2012$suegros
 
 #############cantidad de suegros que viven con ud  y perciben ingresos (sueg_ing)#############
-gen2012$Sueg_ing<-gen2012$Y_suegros
-gen2015$Sueg_ing<-gen2015$Sueg_ing
+gen2012$sueg_ing<-gen2012$Y_suegros
+gen2013$sueg_ing<-gen2013$Sueg_ing
+gen2014$sueg_ing<-gen2014$Sueg_ing
+gen2015$sueg_ing<-gen2015$Sueg_ing
+gen2016$sueg_ing<-gen2016$Sueg_ing
 
 #############cantidad de otros familiares que viven con ud (fam_otro)#############
 #Este esta bien
+
 #############cantidad de otros familiares que viven con ud  y perciben ingresos (fam_ing)#############
-gen2012$Fam_ing<-gen2012$Y_fam_otro
-gen2015$Fam_ing<-gen2015$Fam_ing
+gen2012$fam_ing<-gen2012$Y_fam_otro
+gen2013$fam_ing<-gen2013$Fam_ing
+gen2014$fam_ing<-gen2014$Fam_ing
+gen2015$fam_ing<-gen2015$Fam_ing
+gen2016$fam_ing<-gen2016$Fam_ing
 
 #############cantidad de otros estudiantes que viven con ud (est_otro)#############
 gen2012$est_otro<-gen2012$estud
 
 #############cantidad de otros estudiantes que viven con ud  y perciben ingresos (est_ing)#############
-gen2012$Est_ing<-gen2012$Y_estud
-gen2015$Est_ing<-gen2015$Est_ing
+gen2012$est_ing<-gen2012$Y_estud
+gen2013$est_ing<-gen2013$Est_ing
+gen2014$est_ing<-gen2014$Est_ing
+gen2015$est_ing<-gen2015$Est_ing
+gen2016$est_ing<-gen2016$Est_ing
 
 #############cantidad de otras personas que viven con ud (per_otro)#############
 gen2012$per_otro<-gen2012$otros
 
 #############cantidad de otras personas que viven con ud  y perciben ingresos (per_ing)#############
-gen2012$Per_ing<-gen2012$Y_otros
-gen2015$Per_ing<-gen2015$Per_ing
+gen2012$per_ing<-gen2012$Y_otros
+gen2013$per_ing<-gen2013$Per_ing
+gen2014$per_ing<-gen2014$Per_ing
+gen2015$per_ing<-gen2015$Per_ing
+gen2016$per_ing<-gen2016$Per_ing
 
 #############region donde curso educacion primaria (edu_prim)#############
 gen2012$edu_prim<-gen2012$primaria_region
-gen2015$edu_prim<-tolower(gen2015$edu_prim)
+
+gen2012$edu_prim <- ifelse(as.numeric(gen2012$edu_prim) > 1 & as.numeric(gen2012$edu_prim) < 20, 1,
+                          ifelse(as.numeric(gen2012$edu_prim) > 19, 3, 2))
+
+gen2013$edu_prim <- ifelse(as.numeric(gen2013$edu_prim) > 2 & as.numeric(gen2013$edu_prim) < 21, 1,
+                          ifelse(as.numeric(gen2013$edu_prim) > 20, 3,
+                                 ifelse(as.numeric(gen2013$edu_prim) == 1, NA, 2)))
+                          
+gen2014$edu_prim <- ifelse(as.numeric(gen2014$edu_prim) > 1 & as.numeric(gen2014$edu_prim) < 20, 1,
+                          ifelse(as.numeric(gen2014$edu_prim) > 19, 3,
+                                 ifelse(as.numeric(gen2014$edu_prim) == 32, NA, 2)))
+
+gen2015$edu_prim <- ifelse(as.numeric(gen2015$edu_prim) > 2 & as.numeric(gen2015$edu_prim) < 21, 1,
+                          ifelse(as.numeric(gen2015$edu_prim) > 20, 3,
+                                 ifelse(as.numeric(gen2015$edu_prim) == 1, NA, 2)))
+
+gen2016$edu_prim <- ifelse(as.numeric(gen2016$edu_prim) > 1 & as.numeric(gen2016$edu_prim) < 20, 1,
+                          ifelse(as.numeric(gen2016$edu_prim) > 19, 3, 2))
 
 #############sector en que curso educacion primaria (tip_inst_pri)#############
-gen2012$tip_inst_pri<-gen2012$primaria_sector
-gen2015$tip_inst_pri<-tolower(gen2015$tip_inst_pri)
+gen2012$tip_inst_pri <- gen2012$primaria_sector
+
+gen2014$tip_inst_pri <- ifelse(gen2014$tip_inst_pri == "Sin dato", NA, gen2014$tip_inst_pri)
+gen2014$tip_inst_pri <- as.factor(gen2014$tip_inst_pri)
+levels(gen2014$tip_inst_pri) <- levels(gen2012$tip_inst_pri)
+
+gen2016$tip_inst_pri <- ifelse(gen2016$tip_inst_pri == "Sin datos", NA, gen2016$tip_inst_pri)
+gen2016$tip_inst_pri <- as.factor(gen2016$tip_inst_pri)
+levels(gen2016$tip_inst_pri) <- levels(gen2012$tip_inst_pri)
 
 #############region donde curso primeros 5 anos de secundaria (sec_1_5)#############
 gen2012$sec_1_5<-gen2012$secund_region
-gen2015$sec_1_5<-tolower(gen2015$sec_1_5)
+
+gen2012$sec_1_5 <- ifelse(as.numeric(gen2012$sec_1_5) > 1 & as.numeric(gen2012$sec_1_5) < 20, 1,
+                           ifelse(as.numeric(gen2012$sec_1_5) > 19, 3, 2))
+
+gen2013$sec_1_5 <- ifelse(as.numeric(gen2013$sec_1_5) > 2 & as.numeric(gen2013$sec_1_5) < 21, 1,
+                          ifelse(as.numeric(gen2013$sec_1_5) > 20, 3,
+                                 ifelse(as.numeric(gen2013$sec_1_5) == 1, NA, 2)))
+
+gen2014$sec_1_5 <- ifelse(as.numeric(gen2014$sec_1_5) > 1 & as.numeric(gen2014$sec_1_5) < 20, 1,
+                          ifelse(as.numeric(gen2014$sec_1_5) > 19, 3,
+                                 ifelse(as.numeric(gen2014$sec_1_5) == 32, NA, 2)))
+
+gen2015$sec_1_5 <- ifelse(as.numeric(gen2015$sec_1_5) > 2 & as.numeric(gen2015$sec_1_5) < 21, 1,
+                          ifelse(as.numeric(gen2015$sec_1_5) > 20, 3,
+                                 ifelse(as.numeric(gen2013$sec_1_5) == 1 , NA, 2)))
+
+gen2016$sec_1_5 <- ifelse(as.numeric(gen2016$sec_1_5) > 2 & as.numeric(gen2016$sec_1_5) < 21, 1,
+                          ifelse(as.numeric(gen2016$sec_1_5) > 20, 3, 
+                                 ifelse(as.numeric(gen2013$sec_1_5) == 1 | as.numeric(gen2013$sec_1_5) == 33, NA, 2)))
 
 #############sector en que curso primeros 5 anos de secundaria (tip_inst_sec)#############
 gen2012$tip_inst_sec<-gen2012$secund_sector
-gen2015$tip_inst_sec<-tolower(gen2015$tip_inst_sec)
+
+gen2014$tip_inst_sec <- ifelse(gen2014$tip_inst_sec == "Sin dato", NA, gen2014$tip_inst_sec)
+gen2014$tip_inst_sec <- as.factor(gen2014$tip_inst_sec)
+levels(gen2014$tip_inst_sec) <- levels(gen2012$tip_inst_sec)
+
+gen2016$tip_inst_sec <- ifelse(gen2016$tip_inst_sec == "Sin datos", NA, gen2016$tip_inst_sec)
+gen2016$tip_inst_sec <- as.factor(gen2016$tip_inst_sec)
+levels(gen2016$tip_inst_sec) <- levels(gen2012$tip_inst_sec)
 
 #############region donde curso 6 de secundaria (sec_6)#############
 gen2012$sec_6<-gen2012$sexto_region
-gen2015$sec_6<-tolower(gen2015$sec_6)
+
+gen2012$sec_6 <- ifelse(as.numeric(gen2012$sec_6) > 2 & as.numeric(gen2012$sec_6) < 21, 1,
+                        ifelse(as.numeric(gen2012$sec_6) > 20, 3,
+                               ifelse(as.numeric(gen2012$sec_6) == 1, NA, 2)))
+
+## HAY UN PROBLEMA CON ESTA VARIABLE EN 2013: 363 (salto respecto a otros años) RESPONDEN NO HABER CURSADO SECUNDARIA (creo que porque hicieron UTU y en vez de tener NA como otros años se puso no cursó)
+
+gen2013$sec_6 <- ifelse(as.numeric(gen2013$sec_6) > 2 & as.numeric(gen2013$sec_6) < 21, 1,
+                        ifelse(as.numeric(gen2013$sec_6) > 20, 3,
+                               ifelse(as.numeric(gen2013$sec_6) == 1, NA, 2)))
+
+gen2014$sec_6 <- ifelse(as.numeric(gen2014$sec_6) > 1 & as.numeric(gen2014$sec_6) < 20, 1,
+                        ifelse(as.numeric(gen2014$sec_6) > 19, 3,
+                               ifelse(as.numeric(gen2014$sec_6) == 32, NA, 2)))
+
+gen2015$sec_6 <- ifelse(as.numeric(gen2015$sec_6) > 2 & as.numeric(gen2015$sec_6) < 21, 1,
+                        ifelse(as.numeric(gen2015$sec_6) > 20, 3,
+                               ifelse(as.numeric(gen2013$sec_6) == 1, NA, 2)))
+
+gen2016$sec_6 <- ifelse(as.numeric(gen2016$sec_6) > 2 & as.numeric(gen2016$sec_6) < 21, 1,
+                        ifelse(as.numeric(gen2016$sec_6) > 20, 3, 
+                               ifelse(as.numeric(gen2013$sec_6) == 1 | as.numeric(gen2013$sec_6) == 33, NA, 2)))
+
+## Si hizo UTU
+
+gen2012$utu <- ifelse(as.numeric(gen2012$utu) > 2 & as.numeric(gen2012$utu) < 21, 1,
+                      ifelse(as.numeric(gen2012$utu) > 20, 3,
+                             ifelse(as.numeric(gen2012$utu) == 1, NA, 2)))
+
+gen2013$utu <- ifelse(as.numeric(gen2013$utu) > 2 & as.numeric(gen2013$utu) < 21, 1,
+                      ifelse(as.numeric(gen2013$utu) > 20, 3,
+                             ifelse(as.numeric(gen2013$utu) == 1, NA, 2)))
+
+## Vuelvo a recodificar sec_6 incluyendo resultados de UTU
+
+gen2012$sec_6 <- ifelse(is.na(gen2012$sec_6), gen2012$utu, gen2012$sec_6)
+gen2013$sec_6 <- ifelse(is.na(gen2013$sec_6), gen2013$utu, gen2013$sec_6)
 
 #############sector en que curso 6 de secundaria (tip_inst_sexto)#############
 gen2012$tip_inst_sexto<-gen2012$sexto_sector
-gen2015$tip_inst_sexto<-tolower(gen2015$tip_inst_sexto)
+
+gen2012$tip_inst_sexto <- ifelse(gen2012$tip_inst_sexto == "No cursó", NA, gen2012$tip_inst_sexto)
+gen2012$tip_inst_sexto <- as.factor(gen2012$tip_inst_sexto)
+levels(gen2012$tip_inst_sexto) <- levels(gen2013$tip_inst_sexto)
+
+gen2014$tip_inst_sexto <- ifelse(gen2014$tip_inst_sexto == "Sin dato", NA, gen2014$tip_inst_sexto)
+gen2014$tip_inst_sexto <- as.factor(gen2014$tip_inst_sexto)
+levels(gen2014$tip_inst_sexto) <- levels(gen2013$tip_inst_sexto)
+
+gen2015$tip_inst_sexto <- ifelse(gen2015$tip_inst_sexto == "Sin dato", NA, gen2015$tip_inst_sexto)
+gen2015$tip_inst_sexto <- as.factor(gen2015$tip_inst_sexto)
+levels(gen2015$tip_inst_sexto) <- levels(gen2013$tip_inst_sexto)
+
+gen2016$tip_inst_sexto <- ifelse(gen2016$tip_inst_sexto == "Sin datos" | gen2016$tip_inst_sexto == "No corresponde", NA, gen2016$tip_inst_sexto)
+gen2016$tip_inst_sexto <- as.factor(gen2016$tip_inst_sexto)
+levels(gen2016$tip_inst_sexto) <- levels(gen2013$tip_inst_sexto)
 
 #############ano de egreso de educacion media (egre_sec)#############
 gen2012$egre_sec<-gen2012$egre_sexto
 
-#############educacion del padre(ed_padre)#############
-#Niveles: 1 "S/inst-Prim.Incomp" 2 "Prim.Comp." 3 "Ed.Media.Incp" 4 "Ed.Media.Cmpl" 5 "Terc.No.Univ.Incmp" 6 "Terc.No.Univ.Cmpl" 7 "Univ.Incmpl" 8 "Univ.Cmpl" 99 "Residual"
-gen2012$ed_padre<-rep(0,nrow(gen2012))
-#levels(gen2012$pad_edu_seciu)
-levels(gen2012$pad_edu_seciu)<-c(6, 5, 8, 7, 10, 9, 14, 2, 4, 3, 1, 13, 12, 11)
-#levels(gen2012$pad_edu_2014)
-levels(gen2012$pad_edu_2014)<-c(5, 4, 99, 3, 13)
+##############################
+###########################
+##   EDUCACION DE LOS PADRES
+####################
 
-gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==7)]<-rep(3,length(gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==7)]))
-gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==8)]<-rep(4,length(gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==8)]))
-gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==9)]<-rep(5,length(gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==9)]))
-gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==10 | gen2012$pad_edu_seciu==13)]<-rep(6,length(gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==10 | gen2012$pad_edu_seciu==13)]))
-gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==11)]<-rep(7,length(gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==11)]))
-gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==12)]<-rep(8,length(gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==12)]))
-gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==14)]<-rep(99,length(gen2012$pad_edu_seciu[which(gen2012$pad_edu_seciu==14)]))
+##############################
+###########################
+##   PADRE
+####################
 
-gen2012$pad_edu_2014[which(gen2012$pad_edu_2014==3)]<-rep(2,length(gen2012$pad_edu_2014[which(gen2012$pad_edu_2014==3)]))
-gen2012$pad_edu_2014[which(gen2012$pad_edu_2014==4)]<-rep(3,length(gen2012$pad_edu_2014[which(gen2012$pad_edu_2014==4)]))
-gen2012$pad_edu_2014[which(gen2012$pad_edu_2014==5)]<-rep(4,length(gen2012$pad_edu_2014[which(gen2012$pad_edu_2014==5)]))
-gen2012$pad_edu_2014[which(gen2012$pad_edu_2014==13)]<-rep(8,length(gen2012$pad_edu_2014[which(gen2012$pad_edu_2014==13)]))
+#Educacion del padre
+gen2012$pad_edu_seciu<-as.character(gen2012$pad_edu_seciu)
+gen2012$pad_edu_papel<-as.character(gen2012$pad_edu_papel)
+gen2012$pad_edu_2014<-as.character(gen2012$pad_edu_2014)
 
-gen2012$ed_padre<-gen2012$pad_edu_seciu
-gen2012[which(is.na(gen2012$pad_edu_seciu)==T & is.na(gen2012$pad_edu_2014)==F),"ed_padre"]<-gen2012[which(is.na(gen2012$pad_edu_seciu)==T & is.na(gen2012$pad_edu_2014)==F),"pad_edu_2014"]
+gen2012$p_edu <- ifelse(is.na(gen2012$pad_edu_seciu) & is.na(gen2012$pad_edu_papel),gen2012$pad_edu_2014,
+                        ifelse(is.na(gen2012$pad_edu_seciu) & !is.na(gen2012$pad_edu_papel),gen2012$pad_edu_papel,gen2012$pad_edu_seciu))
 
-levels(gen2013$ed_padre)<-c(6, 5, 6, 5, 4, 3, 2, 1, 4, 3, 99, 1, 8, 7)
-gen2014$ed_padre<-as.factor(gen2014$ed_padre)
-levels(gen2014$ed_padre )<-c(1, 1, 2, 3, 4, 5, 6, 7, 8, 99, stringsAsFactors=FALSE)
-levels(gen2015$ed_padre)<-c(6, 5, 2, 1, 4, 3, 99, 1, 8, 7)
-levels(gen2016$ed_padre)<-c(6, 5, 2, 1, 4, 3, 99, 1, 8, 7)
-#############educacion de la madre(ed_madre)#############
-#Niveles: 1 "S/inst-Prim.Incomp" 2 "Prim.Comp." 3 "Ed.Media.Incp" 4 "Ed.Media.Cmpl" 5 "Terc.No.Univ.Incmp" 6 "Terc.No.Univ.Cmpl" 7 "Univ.Incmpl" 8 "Univ.Cmpl" 99 "Residual"
-gen2012$ed_madre<-rep(0,nrow(gen2012))
-#levels(gen2012$mad_edu_seciu)
-levels(gen2012$mad_edu_seciu)<-c(6, 5, 7, 10, 9, 14, 2, 4, 3, 1, 13, 12, 11)
-#levels(gen2012$mad_edu_2014)
-levels(gen2012$mad_edu_2014)<-c(11, 5, 4, 3, 2, 13)
+gen2013$p_edu <- as.character(gen2013$ed_padre)
+gen2014$p_edu <- gen2014$ed_padre
+gen2015$p_edu <- as.character(gen2015$ed_padre)
+gen2016$p_edu <- as.character(gen2016$ed_padre)
 
-gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==7)]<-rep(3,length(gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==7)]))
-gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==8)]<-rep(4,length(gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==8)]))
-gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==9)]<-rep(5,length(gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==9)]))
-gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==10 | gen2012$mad_edu_seciu==13)]<-rep(6,length(gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==10 | gen2012$mad_edu_seciu==13)]))
-gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==11)]<-rep(7,length(gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==11)]))
-gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==12)]<-rep(8,length(gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==12)]))
-gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==14)]<-rep(99,length(gen2012$mad_edu_seciu[which(gen2012$mad_edu_seciu==14)]))
+gen2012$edu_p <- ifelse(gen2012$p_edu == "Primaria completa" | gen2012$p_edu == "Primaria Completa" |  gen2012$p_edu == "Primaria incompleta", 1,
+                        ifelse(gen2012$p_edu == "Ens. Militar/ Policial completa" | gen2012$p_edu == "Ens. Militar/ Policial incompleta" | gen2012$p_edu ==                           "Enseñanza Militar/ Policial Completa" | gen2012$p_edu == "Enseñanza Militar/ Policial Incompleta" | 
+                        gen2012$p_edu == "Educación Media completa" | gen2012$p_edu == "Educación Media incompleta" | gen2012$p_edu == "Secundaria completa" |
+                        gen2012$p_edu == "Secundaria Completa" | gen2012$p_edu == "Secundaria incompleta" | gen2012$p_edu == "Secundaria Incompleta", 2, 
+                               ifelse(gen2012$p_edu == "Educ Terciaria No Universitaria incompleto" | gen2012$p_edu == "Educ. Téc. (UTU) completa" | 
+                               gen2012$p_edu == "Educ. Téc. (UTU) incompleta" | gen2012$p_edu == "Educación Técnica (UTU) Completa" | gen2012$p_edu ==                                       "Educación Técnica (UTU) Incompleta" | gen2012$p_edu == "IPA/ CERP/ Magisterio/ INET/ Ed Física Completo" | 
+                               gen2012$p_edu == "IPA/ CERP/Magisterio/ INET/ Ed Física Incompleto" | 
+                               gen2012$p_edu == "IPA/ CERP/Magisterio/ INET/ Ed. Física completa" | gen2012$p_edu == "Terciario no Universitario", 3,
+                                      ifelse(gen2012$p_edu == "Universidad completa" | gen2012$p_edu == "Universidad Completa" | 
+                                      gen2012$p_edu == "Universidad incompleta" | gen2012$p_edu == "Universidad Incompleto", 4,
+                                             ifelse(gen2012$p_edu == "No sabe", NA, 0)))))
 
-gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==2)]<-rep(1,length(gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==2)]))
-gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==3)]<-rep(2,length(gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==3)]))
-gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==4)]<-rep(3,length(gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==4)]))
-gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==5)]<-rep(4,length(gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==5)]))
-gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==11)]<-rep(6,length(gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==11)]))
-gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==13)]<-rep(8,length(gen2012$mad_edu_2014[which(gen2012$mad_edu_2014==13)]))
+gen2013$edu_p <- ifelse(gen2013$p_edu == "Primaria completa" | gen2013$p_edu == "Primaria incompleta", 1,
+                        ifelse(gen2013$p_edu == "Secundaria completa" | gen2013$p_edu == "Secundaria incompleta" | 
+                        gen2013$p_edu == "Enseñanza militar/policial completa" | gen2013$p_edu == "Enseñanza militar/policial incompleta", 2,
+                               ifelse(gen2013$p_edu == "Educ Terciaria No Universitaria completo" | 
+                               gen2013$p_edu == "Educ Terciaria No Universitaria incompleto" | gen2013$p_edu == "Educación técnica (UTU) completa" | 
+                               gen2013$p_edu == "Educación técnica (UTU) incompleta", 3,
+                                      ifelse(gen2013$p_edu == "Universidad Completa" | gen2013$p_edu == "Universidad incompleta", 4, 
+                                            ifelse(gen2013$p_edu == "Sin Dato", NA, 0)))))
+                               
+gen2014$edu_p <- ifelse(gen2014$p_edu == 2 | gen2014$p_edu == 3, 1,
+                        ifelse(gen2014$p_edu == 4 | gen2014$p_edu == 5, 2,
+                               ifelse(gen2014$p_edu == 10 | gen2014$p_edu == 11, 3,
+                                      ifelse(gen2014$p_edu == 12 | gen2014$p_edu == 13, 4, 
+                                             ifelse(gen2014$p_edu == 1, 0, NA)))))
 
-gen2012$ed_madre<-gen2012$mad_edu_seciu
-gen2012[which(is.na(gen2012$mad_edu_seciu)==T & is.na(gen2012$mad_edu_2014)==F),"ed_madre"]<-gen2012[which(is.na(gen2012$mad_edu_seciu)==T & is.na(gen2012$mad_edu_2014)==F),"mad_edu_2014"]
+gen2015$edu_p <- ifelse(gen2015$p_edu == "Primaria completa" | gen2015$p_edu == "Primaria incompleta", 1,
+                        ifelse(gen2015$p_edu == "Secundaria completa" | gen2015$p_edu == "Secundaria incompleta", 2,
+                               ifelse(gen2015$p_edu == "Educ Terciaria No Universitaria completo" | 
+                                      gen2015$p_edu == "Educ Terciaria No Universitaria incompleto", 3,
+                                      ifelse(gen2015$p_edu == "Universidad Completa" | gen2015$p_edu == "Universidad incompleta", 4,
+                                             ifelse(gen2015$p_edu == "Sin Dato", NA, 0)))))
 
-levels(gen2013$ed_madre)<-c(6, 5, 6, 5, 4, 3, 2, 1, 4, 3, 99, 1, 8, 7)
-gen2014$ed_madre<-as.factor(gen2014$ed_madre)
-levels(gen2014$ed_madre)<-c(1, 1, 2, 3, 4, 5, 6, 7, 8, 99, 99)
-levels(gen2015$ed_madre)<-c(6, 5, 2, 1, 4, 3, 99, 1, 8, 7)
-levels(gen2016$ed_madre)<-c(6, 5, 2, 1, 4, 3, 99, 1, 8, 7)
-#############OTROS ESTUDIOS TERCIARIOS : OMITIDO#############
+gen2016$edu_p <- ifelse(gen2016$p_edu == "Primaria completa" | gen2016$p_edu == "Primaria incompleta", 1,
+                        ifelse(gen2016$p_edu == "Secundaria completa" | gen2016$p_edu == "Secundaria incompleta", 2,
+                               ifelse(gen2016$p_edu == "Educ Terciaria No Universitaria completo" | 
+                                      gen2016$p_edu == "Educ Terciaria No Universitaria incompleto", 3,
+                                      ifelse(gen2016$p_edu == "Universidad Completa" | gen2016$p_edu == "Universidad incompleta", 4,
+                                             ifelse(gen2016$p_edu == "Sin Dato", NA, 0)))))
+
+table(gen2012$edu_p)
+table(gen2013$edu_p)
+table(gen2014$edu_p)
+table(gen2015$edu_p)
+table(gen2016$edu_p)
+
+##############################
+###########################
+##   MADRE
+####################
+
+#Educacion de la madre
+gen2012$mad_edu_seciu<-as.character(gen2012$mad_edu_seciu)
+gen2012$mad_edu_mapel<-as.character(gen2012$mad_edu_papel)
+gen2012$mad_edu_2014<-as.character(gen2012$mad_edu_2014)
+
+gen2012$m_edu <- ifelse(is.na(gen2012$mad_edu_seciu) & is.na(gen2012$mad_edu_mapel),gen2012$mad_edu_2014,
+                        ifelse(is.na(gen2012$mad_edu_seciu) & !is.na(gen2012$mad_edu_mapel),gen2012$mad_edu_mapel,gen2012$mad_edu_seciu))
+
+gen2013$m_edu <- as.character(gen2013$ed_madre)
+gen2014$m_edu <- gen2014$ed_madre
+gen2015$m_edu <- as.character(gen2015$ed_madre)
+gen2016$m_edu <- as.character(gen2016$ed_madre)
+
+gen2012$edu_m <- ifelse(gen2012$m_edu == "Primaria completa" | gen2012$m_edu == "Primaria Completa" |  gen2012$m_edu == "Primaria incompleta", 1,
+                        ifelse(gen2012$m_edu == "Ens. Militar/ Policial completa" | gen2012$m_edu == "Ens. Militar/ Policial incompleta" | gen2012$m_edu ==                           "Enseñanza Militar/ Policial Completa" | gen2012$m_edu == "Enseñanza Militar/ Policial Incompleta" | 
+                               gen2012$m_edu == "Educación Media completa" | gen2012$m_edu == "Educación Media incompleta" | 
+                               gen2012$m_edu == "Secundaria completa" | gen2012$m_edu == "Secundaria Completa" | gen2012$m_edu == "Secundaria incompleta" |                                  gen2012$m_edu == "Secundaria Incompleta", 2, 
+                               ifelse(gen2012$m_edu == "Educ Terciaria No Universitaria incompleto" | gen2012$m_edu == "Educ. Téc. (UTU) completa" | 
+                                      gen2012$m_edu == "Educ. Téc. (UTU) incompleta" | gen2012$m_edu == "Educación Técnica (UTU) Completa" | gen2012$m_edu==                                        "Educación Técnica (UTU) Incompleta" | gen2012$m_edu == "IPA/ CERP/ Magisterio/ INET/ Ed Física Completo" | 
+                                      gen2012$m_edu == "IPA/ CERP/Magisterio/ INET/ Ed Física Incompleto" | 
+                                      gen2012$m_edu == "IPA/ CERP/Magisterio/ INET/ Ed. Física completa" | gen2012$m_edu == "Terciario no Universitario", 3,
+                                      ifelse(gen2012$m_edu == "Universidad completa" | gen2012$m_edu == "Universidad Completa" | 
+                                             gen2012$m_edu == "Universidad incompleta" | gen2012$m_edu == "Universidad Incompleto", 4,
+                                             ifelse(gen2012$m_edu == "No sabe", NA, 0)))))
+
+gen2013$edu_m <- ifelse(gen2013$m_edu == "Primaria completa" | gen2013$m_edu == "Primaria incompleta", 1,
+                        ifelse(gen2013$m_edu == "Secundaria completa" | gen2013$m_edu == "Secundaria incompleta" | 
+                               gen2013$m_edu == "Enseñanza militar/policial completa" | gen2013$m_edu == "Enseñanza militar/policial incompleta", 2,
+                               ifelse(gen2013$m_edu == "Educ Terciaria No Universitaria completo" | 
+                                      gen2013$m_edu == "Educ Terciaria No Universitaria incompleto" | gen2013$m_edu == "Educación técnica (UTU) completa" | 
+                                      gen2013$m_edu == "Educación técnica (UTU) incompleta", 3,
+                                      ifelse(gen2013$m_edu == "Universidad Completa" | gen2013$m_edu == "Universidad incompleta", 4, 
+                                             ifelse(gen2013$m_edu == "Sin Dato", NA, 0)))))
+
+gen2014$edu_m <- ifelse(gen2014$m_edu == 2 | gen2014$m_edu == 3, 1,
+                        ifelse(gen2014$m_edu == 4 | gen2014$m_edu == 5, 2,
+                               ifelse(gen2014$m_edu == 10 | gen2014$m_edu == 11, 3,
+                                      ifelse(gen2014$m_edu == 12 | gen2014$m_edu == 13, 4,
+                                             ifelse(gen2014$p_edu == 1, 0, NA)))))
+
+gen2015$edu_m <- ifelse(gen2015$m_edu == "Primaria completa" | gen2015$m_edu == "Primaria incompleta", 1,
+                        ifelse(gen2015$m_edu == "Secundaria completa" | gen2015$m_edu == "Secundaria incompleta", 2,
+                               ifelse(gen2015$m_edu == "Educ Terciaria No Universitaria completo" | 
+                                      gen2015$m_edu == "Educ Terciaria No Universitaria incompleto", 3,
+                                      ifelse(gen2015$m_edu == "Universidad Completa" | gen2015$m_edu == "Universidad incompleta", 4,
+                                             ifelse(gen2015$m_edu == "Sin Dato", NA, 0)))))
+
+gen2016$edu_m <- ifelse(gen2016$m_edu == "Primaria completa" | gen2016$m_edu == "Primaria incompleta", 1,
+                        ifelse(gen2016$m_edu == "Secundaria completa" | gen2016$m_edu == "Secundaria incompleta", 2,
+                               ifelse(gen2016$m_edu == "Educ Terciaria No Universitaria completo" | 
+                                      gen2016$m_edu == "Educ Terciaria No Universitaria incompleto", 3,
+                                      ifelse(gen2016$m_edu == "Universidad Completa" | gen2016$m_edu == "Universidad incompleta", 4,
+                                             ifelse(gen2016$m_edu == "Sin Dato", NA, 0)))))
+
+table(gen2012$edu_m)
+table(gen2013$edu_m)
+table(gen2014$edu_m)
+table(gen2015$edu_m)
+table(gen2016$edu_m)
 
 #############horas promedio de trabajo semanal (hora_tra)#############
-gen2012$hora_tra<-gen2012$hor_trab
-gen2015$hora_tra<-as.factor(tolower(gen2015$hora_tra))
-levels(gen2015$hora_tra[which(gen2015$hora_tra=="no corresponde")])<-rep(NA,length(gen2015$hora_tra[which(gen2015$hora_tra=="no corresponde")]  ) )
-levels(gen2016$hora_tra[which(gen2016$hora_tra=="no corresponde")])<-rep(NA,length(gen2016$hora_tra[which(gen2016$hora_tra=="no corresponde")]  ) )
+gen2012$hora_tra <- gen2012$hor_trab
+gen2015$hora_tra <- ifelse(gen2015$hora_tra == "No corresponde", NA, gen2015$hora_tra)
+gen2015$hora_tra <- as.factor(gen2015$hora_tra)
+levels(gen2015$hora_tra) <- levels(gen2012$hora_tra)
+gen2016$hora_tra <- ifelse(gen2016$hora_tra == "No corresponde", NA, gen2016$hora_tra)
+gen2016$hora_tra <- as.factor(gen2016$hora_tra)
+levels(gen2016$hora_tra) <- levels(gen2012$hora_tra)
+
+
 #############anio en que comenzo su actividad laboral (inic_tra)#############
 gen2012$inic_tra<-gen2012$an_com
-gen2015$inic_tra<-ifelse(gen2015$inic_tra=="No corresponde", NA, gen2015$inic_tra)
-gen2016$inic_tra<-ifelse(gen2016$inic_tra=="No corresponde", NA, gen2016$inic_tra)
+gen2015$inic_tra<-ifelse(is.na(gen2015$inic_tra) | gen2015$inic_tra == 0, NA, gen2015$inic_tra)
+gen2016$inic_tra<-ifelse(is.na(gen2016$inic_tra) | gen2016$inic_tra == 0, NA, gen2016$inic_tra)
+
+
 #############relacion de la ocupacion con la carrera (rel_trab)#############
-gen2015$rel_trab<-as.factor(tolower(gen2015$rel_trab))
 
-#############categoria ocupacional del estudiante (cat_oc_est)#############
-gen2013$cat_oc_est<-as.factor(gen2013$cat_oc_est)
-levels(gen2013$cat_oc_est)<-c("asalariado privado","asalariado público","pasante-becario")
-table(gen2013$cat_oc_est)
+gen2012$rel_trab<-ifelse(gen2012$rel_trab=="Está bastante relacionada" | gen2012$rel_trab=="Está muy relacionada", 1,
+                         ifelse(gen2012$rel_trab=="Está relacionada" | gen2012$rel_trab=="Está poco relacionada", 2, 3))
 
-gen2015$cat_oc_est<-as.factor(tolower(gen2015$cat_oc_est))
-gen2016$cat_oc_est<-as.factor(tolower(gen2016$cat_oc_est))
+gen2013$rel_trab<-ifelse(gen2013$rel_trab=="Está muy relacionada", 1,
+                         ifelse(gen2013$rel_trab=="Está relacionada" | gen2013$rel_trab=="Está poco relacionada" | 
+                                gen2013$rel_trab=="Está parcialmente relacionada", 2,
+                                ifelse(gen2013$rel_trab=="No hay dato", NA, 3)))
+
+gen2014$rel_trab<-ifelse(gen2014$rel_trab=="Está bastante relacionada" | gen2014$rel_trab=="Está muy relacionada", 1,
+                         ifelse(gen2014$rel_trab=="Está relacionada" | gen2014$rel_trab=="Está poco relacionada", 2, 3))
+
+gen2015$rel_trab<-ifelse(gen2015$rel_trab=="Está muy relacionada", 1,
+                         ifelse(gen2015$rel_trab=="Está relacionada" | gen2015$rel_trab=="Está poco relacionada" | 
+                                  gen2015$rel_trab=="Está parcialmente relacionada", 2,
+                                ifelse(gen2015$rel_trab=="No corresponde", NA, 3)))
+
+gen2016$rel_trab<-ifelse(gen2016$rel_trab=="Está muy relacionada", 1,
+                         ifelse(gen2016$rel_trab=="Está relacionada" | gen2016$rel_trab=="Está poco relacionada" | 
+                                  gen2016$rel_trab=="Está parcialmente relacionada", 2,
+                                ifelse(gen2016$rel_trab=="No corresponde" | gen2016$rel_trab=="No hay dato", NA, 3)))
+
+#HASTA ACA ESTA CHEQUEADO##
+
+#HAY QUE ARREGLAR LAS CATEGORIAS OCUPACIONALES
 
 #############ocupacion del estudiante (ocup_est)#############
+levels(gen2012$cat_oc_est)
+levels(gen2013$cat_oc_est)
+levels(gen2014$cat_oc_est)
+levels(gen2015$cat_oc_est)
+levels(gen2016$cat_oc_est)
+
+gen2012$catoc_est <- as.numeric(gen2012$cat_oc_est)
+gen2012$catoc_est <- ifelse(is.na(gen2012$catoc_est), NA, gen2012$catoc_est)
+
+gen2013$catoc_est <- as.numeric(gen2013$cat_oc_est)
+gen2013$catoc_est <- ifelse(is.na(gen2013$catoc_est), NA, gen2013$catoc_est)
+
+gen2014$catoc_est <- as.numeric(gen2014$cat_oc_est)
+gen2014$catoc_est <- ifelse(is.na(gen2014$catoc_est), NA, gen2014$catoc_est)
+
+gen2015$catoc_est <- as.numeric(gen2015$cat_oc_est)
+gen2015$catoc_est <- ifelse((gen2015$catoc_est==1 | gen2015$catoc_est==9), NA, 
+                            ifelse(gen2015$catoc_est==2, 1, 
+                                   ifelse(gen2015$catoc_est==3, 2,
+                                          ifelse(gen2015$catoc_est==4, 3,
+                                                 ifelse(gen2015$catoc_est==5, 4,
+                                                        ifelse(gen2015$catoc_est==6, 5,
+                                                               ifelse(gen2015$catoc_est==7, 6,7)))))))
+
+gen2016$catoc_est <- as.numeric(gen2016$cat_oc_est)
+gen2016$catoc_est <- ifelse((gen2016$catoc_est==1 | gen2016$catoc_est==9), NA, 
+                            ifelse(gen2016$catoc_est==2, 1, 
+                                   ifelse(gen2016$catoc_est==3, 2,
+                                          ifelse(gen2016$catoc_est==4, 3,
+                                                 ifelse(gen2016$catoc_est==5, 4,
+                                                        ifelse(gen2016$catoc_est==6, 5,
+                                                               ifelse(gen2016$catoc_est==7, 6,7)))))))
+
+############# ocupacion del estudiante (ocup_est)#############
+
+levels(gen2012$enc_trab)
+levels(gen2013$ocup_est)
+levels(gen2014$ocup_est)
 levels(gen2015$ocup_est)
-levels(gen2012$enc_trab)<-c("Trabajadores de los servicios y comercios/Vendedores","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Profesionales/Técnicos/Docentes" ,"Profesionales/Técnicos/Docentes" ,"Trabajadores de los servicios y comercios/Vendedores","Trabajadores de los servicios y comercios/Vendedores","Fuerzas Armadas/Policía","No corresponde","Oficial/Operario/Artesano/Obrero","Oficial/Operario/Artesano/Obrero","NA","NA","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Trabajadores calificados del Agro/Agricultores/Ganadero","NA","NA","NA","NA", stringsAsFactors=FALSE)
-levels(gen2013$ocup_est)<-c("Directivo/Gerente/Rentas","Fuerzas Armadas/Policía","No corresponde","Oficial/Operario/Artesano/Obrero","Oficial/Operario/Artesano/Obrero","NA","NA","Directivo/Gerente/Rentas","Empleados de Oficina/Administrativos","Profesionales/Técnicos/Docentes","Profesionales/Técnicos/Docentes","Trabajadores de los servicios y comercios/Vendedores","Trabajadores de los servicios y comercios/Vendedores","NA","NA","NA","NA","Trabajadores calificados del Agro/Agricultores/Ganadero", "Trabajadores calificados del Agro/Agricultores/Ganadero", "Trabajadores de los servicios y comercios/Vendedores","Trabajadores de los servicios y comercios/Vendedores", stringsAsFactors=F ) 
-levels(gen2014$ocup_est)<-c("Directivo/Gerente/Rentas", "Empleados de Oficina/Administrativos","Fuerzas Armadas/Policía","Oficial/Operario/Artesano/Obrero","Operador de maquinaria/Conductor" ,"Profesionales/Técnicos/Docentes","Trabajadores calificados del Agro/Agricultores/Ganadero","Trabajadores de los servicios y comercios/Vendedores","Trabajador no calificado" )
-levels(gen2015$ocup_est)<-c("Directivo/Gerente/Rentas","Empleados de Oficina/Administrativos","Fuerzas Armadas/Policía","No corresponde","Oficial/Operario/Artesano/Obrero","Operador de maquinaria/Conductor","Profesionales/Técnicos/Docentes","Trabajador no calificado" , "Trabajadores calificados del Agro/Agricultores/Ganadero", "Trabajadores de los servicios y comercios/Vendedores")
-levels(gen2016$ocup_est)<-c("Directivo/Gerente/Rentas","Empleados de Oficina/Administrativos","Fuerzas Armadas/Policía","No corresponde","Oficial/Operario/Artesano/Obrero","Operador de maquinaria/Conductor","Profesionales/Técnicos/Docentes","Trabajador no calificado" , "Trabajadores calificados del Agro/Agricultores/Ganadero", "Trabajadores de los servicios y comercios/Vendedores")
-gen2012$ocup_est<-gen2012$enc_trab
+levels(gen2016$ocup_est)
 
-#############categoria ocupacional del padre (cat_oc_pad)#############
-gen2013$cat_oc_pad<-as.factor(gen2013$cat_oc_pad)
-levels(gen2013$cat_oc_pad)<-c("NA","asalariado privado","asalariado público","patrón","cuenta propia")
-gen2015$cat_oc_pad<-as.factor(tolower(gen2015$cat_oc_pad))
-gen2016$cat_oc_pad<-as.factor(tolower(gen2016$cat_oc_pad))
+gen2012$enc_trab2 <- as.numeric(gen2012$enc_trab)
+gen2013$ocup_est2  <- as.numeric(gen2013$ocup_est)
+gen2014$ocup_est2  <- as.numeric(gen2014$ocup_est)
+gen2015$ocup_est2  <- as.numeric(gen2015$ocup_est)
+gen2016$ocup_est2  <- as.numeric(gen2016$ocup_est)
 
-#############ocupacion del padre (ocup_pad)#############
-gen2012$ocup_pad<-gen2012$pad_trab
-levels(gen2012$ocup_pad)<-c("Trabajadores de los servicios y comercios/Vendedores","Trabajadores de los servicios y comercios/Vendedores","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Profesionales/Técnicos/Docentes","Profesionales/Técnicos/Docentes","Trabajadores de los servicios y comercios/Vendedores","Trabajadores de los servicios y comercios/Vendedores","Fuerzas Armadas/Policía","NA","No corresponde","Oficial/Operario/Artesano/Obrero","Oficial/Operario/Artesano/Obrero","NA","NA","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Trabajadores calificados del Agro/Agricultores/Ganadero","Trabajadores calificados del Agro/Agricultores/Ganadero","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","NA","NA","NA","NA")
-levels(gen2013$ocup_pad)<-c("Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Fuerzas Armadas/Policía","No corresponde","Oficial/Operario/Artesano/Obrero","Oficial/Operario/Artesano/Obrero","NA","NA","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Empleados de Oficina/Administrativos","Profesionales/Técnicos/Docentes" ,"Profesionales/Técnicos/Docentes" ,"NA", "Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","NA","NA","NA","NA","Trabajadores calificados del Agro/Agricultores/Ganadero","Trabajadores calificados del Agro/Agricultores/Ganadero","Trabajadores de los servicios y comercios/Vendedores","Trabajadores de los servicios y comercios/Vendedores")
-levels(gen2014$ocup_pad)<-c("Directivo/Gerente/Rentas" , "Empleados de Oficina/Administrativos", "Fuerzas Armadas/Policía","NA","Oficial/Operario/Artesano/Obrero", "Operador de maquinaria/Conductor", "Profesionales/Técnicos/Docentes", "Trabajadores calificados del Agro/Agricultores/Ganadero", "Trabajadores de los servicios y comercios/Vendedores", "Trabajador no calificado")
-levels(gen2015$ocup_pad)<-c("Directivo/Gerente/Rentas" , "Empleados de Oficina/Administrativos", "Fuerzas Armadas/Policía","No corresponde","Oficial/Operario/Artesano/Obrero", "Operador de maquinaria/Conductor", "Profesionales/Técnicos/Docentes", "Trabajador no calificado", "Trabajadores calificados del Agro/Agricultores/Ganadero", "Trabajadores de los servicios y comercios/Vendedores")
-levels(gen2016$ocup_pad)<-c("Directivo/Gerente/Rentas" , "Empleados de Oficina/Administrativos", "Fuerzas Armadas/Policía","No corresponde","Oficial/Operario/Artesano/Obrero", "Operador de maquinaria/Conductor", "Profesionales/Técnicos/Docentes", "Trabajador no calificado", "Trabajadores calificados del Agro/Agricultores/Ganadero", "Trabajadores de los servicios y comercios/Vendedores")
+## SUMO EMPLEADOS/VENDEDORES A CALIFICADOS
+gen2012$ocu_est <- ifelse((gen2012$enc_trab2==2 | gen2012$enc_trab2==3 | gen2012$enc_trab2==6 | gen2012$enc_trab2==7 | gen2012$enc_trab2==10 | (gen2012$enc_trab2> 12 & gen2012$enc_trab2<17) | gen2012$enc_trab2==19 | gen2012$enc_trab2==21), 1, 
+                          ifelse((gen2012$enc_trab2==4 | gen2012$enc_trab2==11 | gen2012$enc_trab2==12 | gen2012$enc_trab2==17 | gen2012$enc_trab2==18), 2,
+                                 ifelse(gen2012$enc_trab2==1, NA,3)))
 
+## EN ESTE AÑO HAY UN PROBLEMA CON LA CATEGORÍA 8 "SOCIOS DE COMERCIOS": TA REPETIDA Y SALTA EN FRECUENCIA. HAY QUE VER QUÉ ES
+gen2013$ocu_est <- ifelse((gen2013$ocup_est2==15 | (gen2013$ocup_est2>17 & gen2013$ocup_est2<24) | gen2013$ocup_est2==25 | gen2013$ocup_est2==28 | gen2013$ocup_est2==27 | (gen2013$ocup_est2> 8 & gen2013$ocup_est2<13)), 1, 
+                          ifelse((gen2013$ocup_est2==7 | gen2013$ocup_est2==13 | gen2013$ocup_est2==14 | gen2013$ocup_est2==25 | gen2013$ocup_est2==26), 2, 
+                                 ifelse(gen2013$ocup_est2==24, NA,3)))
 
-#############categoria ocupacional de la madre (cat_oc_mad)#############
-gen2013$cat_oc_mad<-as.factor(gen2013$cat_oc_mad)
-levels(gen2013$cat_oc_mad)<-c("asalariado privado","asalariado público","miembro de cooperativa de producción ","patrón","cuenta propia","NA")
-gen2015$cat_oc_mad<-as.factor(tolower(gen2015$cat_oc_mad))
-gen2016$cat_oc_mad<-as.factor(tolower(gen2016$cat_oc_mad))
+gen2014$ocu_est <- ifelse((gen2014$ocup_est2==6 | (gen2014$ocup_est2>0 & gen2014$ocup_est2<5)), 1, 
+                          ifelse((gen2014$ocup_est2==5 | gen2014$ocup_est2==7 | gen2014$ocup_est2==8), 2, 3))
 
-#############ocupacion de la madre (ocup_mad)#############
-gen2012$ocup_mad<-gen2012$mad_trab
-levels(gen2012$ocup_mad)<-c("Trabajadores de los servicios y comercios/Vendedores","Trabajadores de los servicios y comercios/Vendedores","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Profesionales/Técnicos/Docentes","Profesionales/Técnicos/Docentes","Trabajadores de los servicios y comercios/Vendedores","Trabajadores de los servicios y comercios/Vendedores","Fuerzas Armadas/Policía","NA","No corresponde","Oficial/Operario/Artesano/Obrero","Oficial/Operario/Artesano/Obrero","NA","NA","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Trabajadores calificados del Agro/Agricultores/Ganadero","Trabajadores calificados del Agro/Agricultores/Ganadero","NA","NA","NA","NA", stringsAsFactors=FALSE)
-levels(gen2013$ocup_mad)<-c("Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Fuerzas Armadas/Policía","No corresponde","Oficial/Operario/Artesano/Obrero","Oficial/Operario/Artesano/Obrero","NA","NA","Directivo/Gerente/Rentas" ,"Directivo/Gerente/Rentas" ,"Empleados de Oficina/Administrativos", "Profesionales/Técnicos/Docentes","Profesionales/Técnicos/Docentes","NA","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","Directivo/Gerente/Rentas","NA","NA","NA","NA","Trabajadores calificados del Agro/Agricultores/Ganadero","Trabajadores calificados del Agro/Agricultores/Ganadero","Trabajadores de los servicios y comercios/Vendedores","Trabajadores de los servicios y comercios/Vendedores")
-levels(gen2014$ocup_mad)<-c("Directivo/Gerente/Rentas" , "Empleados de Oficina/Administrativos", "Fuerzas Armadas/Policía","NA","Oficial/Operario/Artesano/Obrero", "Operador de maquinaria/Conductor", "Profesionales/Técnicos/Docentes", "Trabajadores calificados del Agro/Agricultores/Ganadero", "Trabajadores de los servicios y comercios/Vendedores", "Trabajador no calificado")
-levels(gen2015$ocup_mad)<-c("Directivo/Gerente/Rentas" , "Empleados de Oficina/Administrativos", "Fuerzas Armadas/Policía","No corresponde","Oficial/Operario/Artesano/Obrero", "Operador de maquinaria/Conductor", "Profesionales/Técnicos/Docentes", "Trabajador no calificado", "Trabajadores calificados del Agro/Agricultores/Ganadero", "Trabajadores de los servicios y comercios/Vendedores")
-levels(gen2016$ocup_mad)<-c("Directivo/Gerente/Rentas" , "Empleados de Oficina/Administrativos", "Fuerzas Armadas/Policía","No corresponde","Oficial/Operario/Artesano/Obrero", "Operador de maquinaria/Conductor", "Profesionales/Técnicos/Docentes", "Trabajador no calificado", "Trabajadores calificados del Agro/Agricultores/Ganadero", "Trabajadores de los servicios y comercios/Vendedores")
+gen2015$ocu_est <- ifelse((gen2015$ocup_est2==6 | (gen2015$ocup_est2>0 & gen2015$ocup_est2<5)), 1, 
+                          ifelse((gen2015$ocup_est2==5 | gen2015$ocup_est2==7 | gen2015$ocup_est2==8), 2,
+                                 ifelse(gen2015$ocup_est2==10, NA, 3)))
+
+gen2016$ocu_est <- ifelse((gen2016$ocup_est2==7 | (gen2016$ocup_est2>1 & gen2016$ocup_est2<6)), 1, 
+                          ifelse((gen2016$ocup_est2==6 | gen2016$ocup_est2==8 | gen2016$ocup_est2==9), 2,
+                                 ifelse((gen2016$ocup_est2==11 | gen2016$ocup_est2==1), NA, 3)))
+
+gen2012$enc_trab2 <- NULL
+gen2013$ocup_est2  <- NULL
+gen2014$ocup_est2  <- NULL
+gen2015$ocup_est2  <- NULL
+gen2016$ocup_est2  <- NULL
+
+table(gen2012$ocu_est)
+table(gen2013$ocu_est)
+table(gen2014$ocu_est)
+table(gen2015$ocu_est)
+table(gen2016$ocu_est)
+
+###### OCUPACIÓN DEL PADRE ########### 
+
+levels(gen2012$pad_trab)
+levels(gen2013$ocup_pad)
+levels(gen2014$ocup_pad)
+levels(gen2015$ocup_pad)
+levels(gen2016$ocup_pad)
+
+gen2012$pad_trab2 <- as.numeric(gen2012$pad_trab)
+gen2013$ocup_pad2  <- as.numeric(gen2013$ocup_pad)
+gen2014$ocup_pad2  <- as.numeric(gen2014$ocup_pad)
+gen2015$ocup_pad2  <- as.numeric(gen2015$ocup_pad)
+gen2016$ocup_pad2  <- as.numeric(gen2016$ocup_pad)
+
+## SUMO EMPLEADOS/VENDEDORES A CALIFICADOS
+gen2012$ocu_pad <- ifelse((gen2012$pad_trab2==2 | gen2012$pad_trab2==3 | gen2012$pad_trab2==6 | gen2012$pad_trab2==7 | gen2012$pad_trab2==10 | (gen2012$pad_trab2> 12 & gen2012$pad_trab2<17) | gen2012$pad_trab2==19 | gen2012$pad_trab2==21), 1, 
+                          ifelse((gen2012$pad_trab2==4 | gen2012$pad_trab2==11 | gen2012$pad_trab2==12 | gen2012$pad_trab2==17 | gen2012$pad_trab2==18), 2,
+                                 ifelse(gen2012$pad_trab2==1, NA,3)))
+
+## EN ESTE AÑO HAY UN PROBLEMA CON LA CATEGORÍA 8 "SOCIOS DE COMERCIOS": TA REPETIDA Y SALTA EN FRECUENCIA. HAY QUE VER QUÉ ES
+gen2013$ocu_pad <- ifelse((gen2013$ocup_pad2==15 | (gen2013$ocup_pad2>17 & gen2013$ocup_pad2<24) | gen2013$ocup_pad2==25 | gen2013$ocup_pad2==28 | gen2013$ocup_pad2==27 | (gen2013$ocup_pad2> 8 & gen2013$ocup_pad2<13)), 1, 
+                          ifelse((gen2013$ocup_pad2==7 | gen2013$ocup_pad2==13 | gen2013$ocup_pad2==14 | gen2013$ocup_pad2==25 | gen2013$ocup_pad2==26), 2, 
+                                 ifelse(gen2013$ocup_pad2==24, NA,3)))
+
+gen2014$ocu_pad <- ifelse((gen2014$ocup_pad2==6 | (gen2014$ocup_pad2>0 & gen2014$ocup_pad2<5)), 1, 
+                          ifelse((gen2014$ocup_pad2==5 | gen2014$ocup_pad2==7 | gen2014$ocup_pad2==8), 2, 3))
+
+gen2015$ocu_pad <- ifelse((gen2015$ocup_pad2==6 | (gen2015$ocup_pad2>0 & gen2015$ocup_pad2<5)), 1, 
+                          ifelse((gen2015$ocup_pad2==5 | gen2015$ocup_pad2==7 | gen2015$ocup_pad2==8), 2,
+                                 ifelse(gen2015$ocup_pad2==10, NA, 3)))
+
+gen2016$ocu_pad <- ifelse((gen2016$ocup_pad2==7 | (gen2016$ocup_pad2>1 & gen2016$ocup_pad2<6)), 1, 
+                          ifelse((gen2016$ocup_pad2==6 | gen2016$ocup_pad2==8 | gen2016$ocup_pad2==9), 2,
+                                 ifelse((gen2016$ocup_pad2==11 | gen2016$ocup_pad2==1), NA, 3)))
+
+gen2012$pad_trab2 <- NULL
+gen2013$ocup_pad2  <- NULL
+gen2014$ocup_pad2  <- NULL
+gen2015$ocup_pad2  <- NULL
+gen2016$ocup_pad2  <- NULL
+
+table(gen2012$ocu_pad)
+table(gen2013$ocu_pad)
+table(gen2014$ocu_pad)
+table(gen2015$ocu_pad)
+table(gen2016$ocu_pad)
+
+####### OCUPACIÓN DE LA MADRE ###########
+
+levels(gen2012$mad_trab)
+levels(gen2013$ocup_mad)
+levels(gen2014$ocup_mad)
+levels(gen2015$ocup_mad)
+levels(gen2016$ocup_mad)
+
+gen2012$mad_trab2 <- as.numeric(gen2012$mad_trab)
+gen2013$ocup_mad2  <- as.numeric(gen2013$ocup_mad)
+gen2014$ocup_mad2  <- as.numeric(gen2014$ocup_mad)
+gen2015$ocup_mad2  <- as.numeric(gen2015$ocup_mad)
+gen2016$ocup_mad2  <- as.numeric(gen2016$ocup_mad)
+
+## SUMO EMPLEADOS/VENDEDORES A CALIFICADOS
+gen2012$ocu_mad <- ifelse((gen2012$mad_trab2==2 | gen2012$mad_trab2==3 | gen2012$mad_trab2==6 | gen2012$mad_trab2==7 | gen2012$mad_trab2==10 | (gen2012$mad_trab2> 12 & gen2012$mad_trab2<17) | gen2012$mad_trab2==19 | gen2012$mad_trab2==21), 1, 
+                          ifelse((gen2012$mad_trab2==4 | gen2012$mad_trab2==11 | gen2012$mad_trab2==12 | gen2012$mad_trab2==17 | gen2012$mad_trab2==18), 2,
+                                 ifelse(gen2012$mad_trab2==1, NA,3)))
+
+## EN ESTE AÑO HAY UN PROBLEMA CON LA CATEGORÍA 8 "SOCIOS DE COMERCIOS": TA REPETIDA Y SALTA EN FRECUENCIA. HAY QUE VER QUÉ ES
+gen2013$ocu_mad <- ifelse((gen2013$ocup_mad2==15 | (gen2013$ocup_mad2>17 & gen2013$ocup_mad2<24) | gen2013$ocup_mad2==25 | gen2013$ocup_mad2==28 | gen2013$ocup_mad2==27 | (gen2013$ocup_mad2> 8 & gen2013$ocup_mad2<13)), 1, 
+                          ifelse((gen2013$ocup_mad2==7 | gen2013$ocup_mad2==13 | gen2013$ocup_mad2==14 | gen2013$ocup_mad2==25 | gen2013$ocup_mad2==26), 2, 
+                                 ifelse(gen2013$ocup_mad2==24, NA,3)))
+
+gen2014$ocu_mad <- ifelse((gen2014$ocup_mad2==6 | (gen2014$ocup_mad2>0 & gen2014$ocup_mad2<5)), 1, 
+                          ifelse((gen2014$ocup_mad2==5 | gen2014$ocup_mad2==7 | gen2014$ocup_mad2==8), 2, 3))
+
+gen2015$ocu_mad <- ifelse((gen2015$ocup_mad2==6 | (gen2015$ocup_mad2>0 & gen2015$ocup_mad2<5)), 1, 
+                          ifelse((gen2015$ocup_mad2==5 | gen2015$ocup_mad2==7 | gen2015$ocup_mad2==8), 2,
+                                 ifelse(gen2015$ocup_mad2==10, NA, 3)))
+
+gen2016$ocu_mad <- ifelse((gen2016$ocup_mad2==7 | (gen2016$ocup_mad2>1 & gen2016$ocup_mad2<6)), 1, 
+                          ifelse((gen2016$ocup_mad2==6 | gen2016$ocup_mad2==8 | gen2016$ocup_mad2==9), 2,
+                                 ifelse((gen2016$ocup_mad2==11 | gen2016$ocup_mad2==1), NA, 3)))
+
+gen2012$mad_trab2 <- NULL
+gen2013$ocup_mad2  <- NULL
+gen2014$ocup_mad2  <- NULL
+gen2015$ocup_mad2  <- NULL
+gen2016$ocup_mad2  <- NULL
+
+table(gen2012$ocu_mad)
+table(gen2013$ocu_mad)
+table(gen2014$ocu_mad)
+table(gen2015$ocu_mad)
+table(gen2016$ocu_mad)
 
 #############inscribio a algun programa de becas para iniciar sus estudios (beca)#############
 gen2012$beca<-gen2012$becas
-gen2015$beca<-as.factor(tolower(gen2015$beca))
-levels(gen2015$beca)<-c("No", "Si")
+levels(gen2016$beca) <- levels(gen2012$beca)
 #############solicito la beca del fondo de solidaridad (beca_fondo)#############
 gen2012$beca_fondo<-gen2012$aplica_fs
-gen2015$beca_fondo<-as.factor(tolower(gen2015$beca_fondo))
-levels(gen2015$beca_fondo)<-c("No", "Si")
+levels(gen2016$beca_fondo) <- levels(gen2012$beca)
 
 #############solicito la beca de bienestar universitario (beca_scbu)#############
 gen2012$beca_scbu<-gen2012$aplica_bu
-gen2015$beca_scbu<-as.factor(tolower(gen2015$beca_scbu))
+levels(gen2016$beca_scbu) <- gen2012$beca_scbu
 
 #############solicito otras becas (beca_otra)#############
 gen2012$beca_otra<-gen2012$aplica_otro
-gen2015$beca_otra<-as.factor(tolower(gen2015$beca_otra))
-levels(gen2015$beca_otra)<-c("No", "Si")
+levels(gen2016$beca_otra) <- levels(gen2012$beca)
+
+#CI
+gen2012$CI<-gen2012$C_I
 
 
+# a2012<-c( "ESTCI", "T", "MAT", "NOMMAT", "FECHA", "PER", "NOTAMATERIA", "CRCURR", "CARR", "CICLO", "NOMCAR", "LUGARINSC", "NOMBRE", "CELULAR", "ANIOFINSEC", "INST", "NOMINST", "TIPOINST", "LUGARINST", "FECEG", "FECHAING", "OBS", "FECHAEG", "barrio", "fecha_nac", "residen", "mujer", "lug_nac", "res_marzo", "tip_viv", "hij_num", "viv_solo", "hij_num", "viv_solo", "ocup", "ocup_ing",  "est_cony", "Cony_ing", "padres", "conyug", "cony_ing", "ocup_ing", "Cony_pad_ing", "hijo_viv", "Hijo_ing", "Herm_ing", "Abu_ing", "suegro", "Sueg_ing", "fam_otro",  "est_otro", "Est_ing", "per_otro", "Per_ing", "edu_prim", "tip_inst_pri", "sec_1_5", "tip_inst_sec", "sec_6", "tip_inst_sexto", "egre_sec", "ed_padre", "ed_madre", "hora_tra", "rel_trab", "cat_oc_est", "ocup_est", "ocup_pad", "cat_oc_pad", "ocup_mad", "cat_oc_mad", "beca", "beca_fondo", "beca_scbu", "beca_otra")
 
-#base2012<-gen2012[c("ESTCI", "T", "MAT", "FECHA", "PER", "NOTAMATERIA", "CRCURR", "CARR", "CICLO", "NOMCAR", "LUGARINSC", "NOMBRE", "CELULAR", "ANIOFINSEC", "INST", "NOMINST", "TIPOINST", "LUGARINST", "FECEG", "FECHAING", "OBS", "FECHAEG", "resultado_actividad", "CREDITOS_APROBADOS", "creditos_anio0", "creditos_anio1", "creditos_anio2", "creditos_anio3", "creditos_anio4",  "creditos_anio5", "fecha_nac", "Facultad", "Direccion", "barrio", "res_lug", "telefono", "celular", "Sexo", "email", "nac_lug", "res_marzo", "vive_en", "hij_num", "viv_solo", "pers_num", "est_cony", "padres", "hijos", "herman", "abuelo", "suegros", "fam_otro" , "estud", "otros", "primaria_region", "primaria_sector", "secund_region", "secund_sector", "sexto_region", "sexto_sector",  "pers_Y", "sexto_sector", "ocup_pad", "ocup_mad", "ed_padre", "ed_madre")]
+# var<-c( "CI", "fecha_nac", "barrio",  "mujer", "lug_nac", "res_marzo", "tip_viv", "hij_num", "viv_solo", "ocup", "ocup_ing", "est_cony", "padres", "Pad_ing", "conyug", "cony_ing", "cony_pad", "Cony_pad_ing", "hijo_viv", "Hijo_ing", "herman", "Herm_ing", "abuelo", "Abu_ing", "suegro", "Sueg_ing", "fam_otro", "Fam_ing", "est_otro", "Est_ing", "per_otro", "Per_ing", "edu_prim", "abuelo", "Abu_ing", "suegro", "Sueg_ing", "fam_otro", "Fam_ing", "est_otro", "Est_ing", "per_otro", "Per_ing", "edu_prim", "tip_inst_pri", "sec_1_5", "tip_inst_sec", "sec_6", "tip_inst_sexto", "egre_sec", "ed_padre", "ed_madre", "hora_tra", "inic_tra", "rel_trab", "cat_oc_est", "ocup_est", "cat_oc_pad", "ocup_pad", "cat_oc_mad", "ocup_mad", "beca", "beca_fondo", "beca_scbu", "beca_otra")
 
+var<-c( "CI", "fecha_nac",  "mujer", "lug_nac", "res_marzo", "tip_viv", "hij_num", "viv_solo", "ocup", "ocup_ing", "est_cony", "padres", "pad_ing", "conyug", "cony_ing", "cony_pad", "cony_pad_ing", "hijo_viv", "hijo_ing", "herman", "herm_ing", "abuelo", "abu_ing", "suegro", "sueg_ing", "fam_otro", "fam_ing", "est_otro", "est_ing", "per_otro", "per_ing", "edu_prim", "tip_inst_pri", "sec_1_5", "tip_inst_sec", "sec_6", "tip_inst_sexto", "egre_sec", "edu_p", "edu_m", "hora_tra", "inic_tra", "rel_trab", "ocu_est", "ocu_pad", "ocu_mad", "beca", "beca_fondo", "beca_scbu", "beca_otra")
 
-#a2012<-c( "ESTCI", "T", "MAT", "NOMMAT", "FECHA", "PER", "NOTAMATERIA", "CRCURR", "CARR", "CICLO", "NOMCAR", "LUGARINSC", "NOMBRE", "CELULAR", "ANIOFINSEC", "INST", "NOMINST", "TIPOINST", "LUGARINST", "FECEG", "FECHAING", "OBS", "FECHAEG", "barrio", "fecha_nac", "residen", "mujer", "lug_nac", "res_marzo", "tip_viv", "hij_num", "viv_solo", "hij_num", "viv_solo", "ocup", "ocup_ing",  "est_cony", "Cony_ing", "padres", "conyug", "cony_ing", "ocup_ing", "Cony_pad_ing", "hijo_viv", "Hijo_ing", "Herm_ing", "Abu_ing", "suegro", "Sueg_ing", "fam_otro",  "est_otro", "Est_ing", "per_otro", "Per_ing", "edu_prim", "tip_inst_pri", "sec_1_5", "tip_inst_sec", "sec_6", "tip_inst_sexto", "egre_sec", "ed_padre", "ed_madre", "hora_tra", "rel_trab", "cat_oc_est", "ocup_est", "ocup_pad", "cat_oc_pad", "ocup_mad", "cat_oc_mad", "beca", "beca_fondo", "beca_scbu", "beca_otra")
-var<-c( "ESTCI", "fecha_nac", "barrio", "residen", "mujer", "lug_nac", "res_marzo", "tip_viv", "hij_num", "viv_solo", "ocup", "ocup_ing", "est_cony", "padres", "Pad_ing", "conyug", "cony_ing", "cony_pad", "Cony_pad_ing", "hijo_viv", "Hijo_ing", "herman", "Herm_ing", "abuelo", "Abu_ing", "suegro", "Sueg_ing", "fam_otro", "Fam_ing", "est_otro", "Est_ing", "per_otro", "Per_ing", "edu_prim", "abuelo", "Abu_ing", "suegro", "Sueg_ing", "fam_otro", "Fam_ing", "est_otro", "Est_ing", "per_otro", "Per_ing", "edu_prim", "tip_inst_pri", "sec_1_5", "tip_inst_sec", "sec_6", "tip_inst_sexto", "egre_sec", "ed_padre", "ed_madre", "hora_tra", "inic_tra", "rel_trab", "cat_oc_est", "ocup_est", "cat_oc_pad", "ocup_pad", "cat_oc_mad", "ocup_mad", "beca", "beca_fondo", "beca_scbu", "beca_otra")
 base2012<-subset(gen2012, select=var)
 base2013<-subset(gen2013, select=var)
 base2014<-subset(gen2014, select=var)
@@ -356,19 +835,24 @@ base2015<-subset(gen2015, select=var)
 base2016<-subset(gen2016, select=var)
 
 #Pegar las bases
-baseconform<-base2012
+baseconform<- base2012
 baseconform<- rbind(baseconform, base2013)
 baseconform<- rbind(baseconform, base2014)
 baseconform<- rbind(baseconform, base2015)
 baseconform<- rbind(baseconform, base2016)
 
 #Para saber cuales son las que no tienen en comun uno y el otro 
-#a2013[!a2013 %in% names(gen2013)]
+#
+#var[!var %in% names(gen2012)]
 
 ###Limpio y exporto la base de datos
 
-rm(list=c("base2012", "base2013", "base2014", "base2015", "base2016", "gen2012", "gen2013", "gen2014", "gen2015", "gen2016", "variables"))
+rm(list=c("base2012", "base2013", "base2014", "base2015", "base2016", "gen2012", "gen2013", "gen2014", "gen2015", "gen2016"))
 
-write.csv(baseconform, "base_con_formulario.csv")
+setwd("C:/Users/sburone/Documents/BASE NPE FINAL/Bases/auxiliares")
+
+write.csv(baseconform, "base_formulario_montevideo.csv")
+write.dta(baseconform, "base_formulario_montevideo.dta")
+
 
 
