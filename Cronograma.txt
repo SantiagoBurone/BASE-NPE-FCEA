@@ -1,12 +1,12 @@
 BASE				FECHA			Scripts						Observaciones
 
 												
-Base versión 1.0.0		2/5/2018		"consulta_por_fecha_actividad.sql"	Base sin formulario estadístico para el período 2012 a marzo de 2018. Solo estudiantes puros NPE (primer ingreso a FCEA es por NPE). Incluye materias por area de conocimiento. 
+Base versión 1_2018_0_0		17/6/2018		"consulta_por_fecha_actividad.sql"	Base sin formulario estadístico para el período 2012 a marzo de 2018. Solo estudiantes puros NPE (primer ingreso a FCEA es por NPE). Incluye materias por area de conocimiento. 
 							"g_inscriptos.sql"
 							"Procedimiento_0_v1.R"
 							"Procedimiento_3_v1.R"
 							
-Base versión 1.1.1		2/5/2018		"consulta_por_fecha_actividad.sql"	Base sin formulario estadístico para el período 2012 a marzo de 2018. Solo estudiantes puros NPE (primer ingreso a FCEA es por NPE) (Hay que arreglar los write y read). 
+Base versión 1_2018_0_1		17/6/2018		"consulta_por_fecha_actividad.sql"	Base sin formulario estadístico para el período 2012 a marzo de 2018. Solo estudiantes puros NPE (primer ingreso a FCEA es por NPE) (Hay que arreglar los write y read). 
 							"g_inscriptos.sql"
 							"Procedimiento_0_v2.R"
 							"Procedimiento_1_v2.R"
